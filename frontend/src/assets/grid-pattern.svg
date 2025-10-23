@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- grid-pattern.svg — subtle tiled grid for backgrounds -->
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120" preserveAspectRatio="xMidYMid slice">
+  <!-- background -->
+  <rect width="100%" height="100%" fill="#ffffff"/>
+
+  <!-- thin grid lines -->
+  <g stroke="#e6e7e9" stroke-width="0.8" opacity="0.6">
+    <!-- vertical lines every 12px -->
+    <path d="M12 0 L12 120" />
+    <path d="M24 0 L24 120" />
+    <path d="M36 0 L36 120" />
+    <path d="M48 0 L48 120" />
+    <path d="M60 0 L60 120" />
+    <path d="M72 0 L72 120" />
+    <path d="M84 0 L84 120" />
+    <path d="M96 0 L96 120" />
+    <path d="M108 0 L108 120" />
+  </g>
+
+  <g stroke="#e6e7e9" stroke-width="0.8" opacity="0.6">
+    <!-- horizontal lines every 12px -->
+    <path d="M0 12 L120 12" />
+    <path d="M0 24 L120 24" />
+    <path d="M0 36 L120 36" />
+    <path d="M0 48 L120 48" />
+    <path d="M0 60 L120 60" />
+    <path d="M0 72 L120 72" />
+    <path d="M0 84 L120 84" />
+    <path d="M0 96 L120 96" />
+    <path d="M0 108 L120 108" />
+  </g>
+
+  <!-- bolder major grid lines every 60px for subtle structure -->
+  <g stroke="#d6d7da" stroke-width="1.6" opacity="0.45">
+    <path d="M60 0 L60 120" />
+    <path d="M0 60 L120 60" />
+  </g>
+</svg>
