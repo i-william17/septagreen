@@ -1,94 +1,92 @@
-'use client';
+import { motion } from 'framer-motion';
+import { FiArrowRight, FiAward, FiCloud, FiFileText } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
+import { images, processSteps, trustSignals } from '../../data/siteContent';
+import { useSitePreferences } from '../../context/SitePreferences';
 
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
-import one from '../../assets/one.jpg';
+const icons = [FiAward, FiCloud, FiFileText];
 
 export default function MidSection() {
-  const ref = useRef(null);
-
-  // Track scroll progress for parallax effects
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start end', 'end start'],
-  });
-
-  // Different parallax layers
-  const textY = useTransform(scrollYProgress, [0, 1], ['0%', '-40%']);
-  const overlayY = useTransform(scrollYProgress, [0, 1], ['0%', '-20%']);
-  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '-15%']);
+  const { text } = useSitePreferences();
 
   return (
-    <section
-      ref={ref}
-      className="relative h-[400px] md:h-[600px] w-full overflow-hidden flex items-center justify-center bg-gray-900"
-    >
-      {/* Parallax Background Image */}
-      <motion.div
-        style={{ y: bgY }}
-        className="absolute inset-0 z-0"
-      >
-        <img
-          src={one}
-          alt="Cybersecurity background"
-          className="w-full h-full object-cover object-center opacity-50"
-        />
-      </motion.div>
+    <section className="relative overflow-hidden bg-white py-20 text-[#20232e] dark:bg-[#050608] dark:text-white md:py-28">
+      <div className="absolute inset-0 sg-grid-pattern opacity-50" />
+      <div className="sg-shell relative z-10">
+        <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
+          <div>
+            <p className="sg-kicker font-bold text-[#0068B8]">{text.mid.kicker}</p>
+            <h2 className="sg-section-title mt-4 font-black">
+              {text.mid.title}
+            </h2>
+          </div>
+          <p className="sg-body-large text-gray-600 dark:text-white/60">
+            {text.mid.body}
+          </p>
+        </div>
 
-      {/* Gradient Overlay */}
-      <motion.div
-        style={{ y: overlayY }}
-        className="absolute inset-0 z-10 bg-gradient-to-b from-black/80 via-black/60 to-black/90"
-      />
+        <div className="mt-14 grid gap-5 md:grid-cols-3">
+          {trustSignals.map((item, index) => {
+            const Icon = icons[index];
+            return (
+              <motion.article
+                key={item.title}
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-80px' }}
+                transition={{ duration: 0.55, delay: index * 0.08 }}
+                className="group border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-[#00B51D] hover:shadow-xl hover:shadow-[#20232e]/10 dark:border-white/10 dark:bg-white/5"
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#20232e] text-white">
+                  <Icon className="h-5 w-5 text-[#0068B8]" />
+                </div>
+                <h3 className="sg-heading mt-10 text-2xl text-[#20232e] dark:text-white">{item.title}</h3>
+                <p className="mt-4 leading-relaxed text-gray-600 dark:text-white/60">{item.text}</p>
+              </motion.article>
+            );
+          })}
+        </div>
 
-      {/* Floating Particles */}
-      {Array.from({ length: 14 }).map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute rounded-full blur-3xl opacity-30 z-0 pointer-events-none"
-          style={{
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            width: `${30 + Math.random() * 60}px`,
-            height: `${30 + Math.random() * 60}px`,
-            backgroundColor:
-              i % 3 === 0
-                ? '#10B981' // Green
-                : i % 2 === 0
-                ? '#3B82F6' // Blue
-                : '#F59E0B', // Yellow
-          }}
-          animate={{
-            y: [0, -20, 0],
-            x: [0, 15, 0],
-            opacity: [0.2, 0.3, 0.2],
-          }}
-          transition={{
-            duration: 10 + Math.random() * 5,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: Math.random() * 2,
-          }}
-        />
-      ))}
+        <div className="mt-20 grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch">
+          <motion.div
+            initial={{ opacity: 0, x: -32 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.65 }}
+            className="relative min-h-[440px] overflow-hidden bg-[#20232e]"
+          >
+            <img src={images.cyber} alt="Security operations review" className="h-full w-full object-cover opacity-75" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#20232e] via-[#20232e]/30 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-6 text-white md:p-8">
+              <p className="sg-kicker text-white/60">{text.mid.rhythmKicker}</p>
+              <h3 className="sg-heading mt-3 text-3xl md:text-5xl">{text.mid.rhythmTitle}</h3>
+            </div>
+          </motion.div>
 
-      {/* Main Text Content */}
-      <motion.div
-        className="relative z-20 text-center px-6 max-w-3xl"
-        style={{ y: textY }}
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: 'easeOut' }}
-        viewport={{ once: true }}
-      >
-        <h2 className="text-4xl md:text-5xl font-extrabold text-white leading-tight drop-shadow-md mb-6">
-          Shaping Africa’s <span className="text-[#10B981]">Digital Security</span> Future
-        </h2>
-        <p className="text-lg md:text-xl text-gray-200 drop-shadow-sm mb-8">
-          At <strong>SeptaGreen</strong>, we build secure and resilient digital infrastructures for
-          governments, enterprises, and startups across the continent — empowering a safer digital tomorrow.
-        </p>
-      </motion.div>
+          <div className="border-y border-[#20232e] dark:border-white/20">
+            {processSteps.map(([number, title, text], index) => (
+              <motion.div
+                key={title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-80px' }}
+                transition={{ duration: 0.5, delay: index * 0.06 }}
+                className="grid gap-4 border-b border-[#20232e]/15 py-6 last:border-b-0 dark:border-white/10 md:grid-cols-[4rem_1fr]"
+              >
+                <span className="font-bold text-[#0068B8]">{number}</span>
+                <div>
+                  <h4 className="sg-heading text-2xl text-[#20232e] dark:text-white">{title}</h4>
+                  <p className="mt-2 leading-relaxed text-gray-600 dark:text-white/60">{text}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        <Link to="/contact" className="sg-link-line mt-10 inline-flex items-center font-bold text-[#20232e] dark:text-[#0068B8]">
+          {text.mid.consultant} <FiArrowRight className="ml-2" />
+        </Link>
+      </div>
     </section>
   );
 }

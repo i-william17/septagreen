@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import Lottie from 'lottie-react';
 import animationData from '../../assets/Animation - 1749808124529.json';
-import { motion } from 'framer-motion';
 
 const Loader = ({ isLoading }) => {
   const [shouldRender, setShouldRender] = useState(isLoading);
@@ -41,7 +40,7 @@ const Loader = ({ isLoading }) => {
         {/* Loading progress indicator */}
         {/* <div className="w-full bg-gray-200 rounded-full h-1.5 mt-6 max-w-xs">
           <div 
-            className="bg-gradient-to-r from-[#00B51D] to-[#3B82F6] h-1.5 rounded-full" 
+            className="bg-gradient-to-r from-[#00B51D] to-[#0068B8] h-1.5 rounded-full" 
             style={{
               width: `${animationComplete ? '100%' : '60%'}`,
               transition: 'width 1s ease-in-out'

@@ -1,177 +1,88 @@
-import React from "react";
-import { motion } from "framer-motion";
-import image from "../../assets/one.jpg";
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { FiArrowRight, FiShield } from 'react-icons/fi';
+import { brandStats, images } from '../../data/siteContent';
+import { useSitePreferences } from '../../context/SitePreferences';
 
-export default function Home() {
+export default function Welcome() {
+  const { text } = useSitePreferences();
+  const { scrollYProgress } = useScroll();
+  const heroY = useTransform(scrollYProgress, [0, 0.45], ['0%', '8%']);
+  const titleY = useTransform(scrollYProgress, [0, 0.45], ['0%', '-10%']);
+
   return (
-    <>
-      <div className="relative min-h-screen w-full bg-white overflow-hidden">
-        {/* Cinematic Background Layers with African Textile Patterns */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.2 }}
-          transition={{ duration: 2 }}
-          className="absolute inset-0 z-0"
-        >
-          <img
-            src={image}
-            alt="Digital security landscape"
-            className="absolute inset-0 w-full h-full object-cover grayscale-[30%] contrast-125"
-          />
-          <div className="absolute inset-0 bg-gradient-to-tr from-gray-950/80 via-transparent to-gray-950/60" />
+    <section className="relative min-h-screen overflow-hidden bg-white text-[#20232e] dark:bg-[#050608] dark:text-white">
+      <div className="absolute inset-0 sg-grid-pattern opacity-60 dark:opacity-20" />
+      <div className="absolute inset-x-0 bottom-0 h-px bg-[#20232e]/15 dark:bg-white/10" />
 
-          {/* African Kente Cloth Overlay Pattern */}
-          <div className="absolute inset-0 opacity-10">
-            {[...Array(20)].map((_, i) => (
-              <motion.div
-                key={i}
-                animate={{
-                  x: [0, Math.random() * 10 - 5],
-                  y: [0, Math.random() * 10 - 5],
-                }}
-                transition={{
-                  duration: 10 + Math.random() * 20,
-                  repeat: Infinity,
-                  repeatType: "reverse",
-                }}
-                className={`absolute h-1 ${
-                  i % 4 === 0
-                    ? "bg-[#10B981]"
-                    : i % 3 === 0
-                    ? "bg-[#3B82F6]"
-                    : "bg-yellow-500"
-                } ${i % 2 === 0 ? "w-16" : "w-24"}`}
-                style={{
-                  top: `${i * 5}%`,
-                  left: `${Math.random() * 100}%`,
-                  transform: `rotate(${Math.random() * 10 - 5}deg)`,
-                }}
-              />
-            ))}
-          </div>
-        </motion.div>
+      <div className="sg-shell relative z-10 flex min-h-screen flex-col justify-end pb-10 pt-44 md:pb-14 md:pt-48">
+        <div className="grid gap-12 lg:grid-cols-[0.96fr_1.04fr] lg:items-end">
+          <motion.div style={{ y: titleY }}>
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.25 }}
+              className="mb-7 inline-flex items-center gap-3 border border-[#20232e]/15 bg-[#f3f7f6] px-4 py-2 text-xs font-bold uppercase text-[#20232e]/70 dark:border-white/15 dark:bg-white/5 dark:text-white/75"
+            >
+              <FiShield className="text-[#00B51D]" />
+              {text.home.badge}
+            </motion.div>
 
-
-
-        {/* Main Content */}
-        <div className="relative z-10 h-screen flex items-center justify-center px-8">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 2, delay: 0.5 }}
-            className="w-full max-w-6xl"
-          >
-
-
-            {/* Text content */}
-            <div className="relative z-10 h-screen flex flex-col justify-center pl-8 md:pl-16 lg:pl-24">
-              <div className="max-w-2xl space-y-6">
-                <motion.h1
-                  className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 tracking-wide leading-tight"
-                  initial={{ y: 50, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 0.5 }}
-                >
-                  Welcome to <span className="text-[#10B981]">SeptaGreen</span>
-                </motion.h1>
-
-                <motion.h2
-                  className="text-2xl md:text-3xl font-medium text-gray-700 tracking-wide"
-                  initial={{ y: 50, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 0.7 }}
-                >
-                  Digital Security,{" "}
-                  <span className="text-[#3B82F6] font-semibold">
-                    African Precision.
-                  </span>
-                </motion.h2>
-
-                {/* Animated Divider */}
-                <motion.div
-                  className="flex space-x-2 pt-8"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 1, delay: 1 }}
-                >
-                  {[...Array(10)].map((_, i) => (
-                    <motion.div
-                      key={i}
-                      className={`h-1 ${
-                        i % 3 === 0
-                          ? "bg-[#10B981] w-8"
-                          : i % 2 === 0
-                          ? "bg-[#3B82F6] w-4"
-                          : "bg-gray-900 w-2"
-                      }`}
-                      initial={{ scaleX: 0 }}
-                      animate={{ scaleX: 1 }}
-                      transition={{ duration: 0.5, delay: 1.2 + i * 0.1 }}
-                    />
-                  ))}
-                </motion.div>
-
-                {/* African proverb */}
-                <motion.div
-                  className="mt-12 text-gray-500 italic"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 1, delay: 1.8 }}
-                >
-                  <motion.p
-                    animate={{
-                      x: [0, 5, 0],
-                      textShadow: [
-                        "0 0 0px rgba(16,185,129,0)",
-                        "0 0 5px rgba(16,185,129,0.3)",
-                        "0 0 0px rgba(16,185,129,0)",
-                      ],
-                    }}
-                    transition={{
-                      duration: 8,
-                      repeat: Infinity,
-                      repeatType: "reverse",
-                    }}
-                  >
-                    "Wisdom is like a baobab tree - no individual can
-                    embrace it alone."
-                  </motion.p>
-                </motion.div>
-              </div>
+            <motion.h1
+              initial={{ opacity: 0, y: 34 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.38 }}
+              className="sg-display max-w-5xl"
+            >
+              {text.home.title}
+            </motion.h1>
+            <p className="sg-body-large mt-8 max-w-2xl text-[#3c5164] dark:text-white/70">
+              {text.home.body}
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link
+                to="/contact"
+                className="inline-flex items-center justify-center border-2 border-[#20232e] bg-[#20232e] px-7 py-4 text-sm font-bold uppercase text-white transition hover:-translate-y-0.5 hover:bg-transparent hover:text-[#20232e] dark:border-white dark:bg-white dark:text-[#20232e] dark:hover:bg-transparent dark:hover:text-white"
+              >
+                {text.home.primary} <FiArrowRight className="ml-2" />
+              </Link>
+              <Link
+                to="/services/penetration-testing"
+                className="inline-flex items-center justify-center border-2 border-[#0068B8] px-7 py-4 text-sm font-bold uppercase text-[#0068B8] transition hover:-translate-y-0.5 hover:bg-[#0068B8] hover:text-white"
+              >
+                {text.home.secondary}
+              </Link>
             </div>
           </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.55 }}
+            className="relative"
+          >
+            <div className="relative overflow-hidden bg-[#20232e]">
+              <motion.img
+                src={images.home}
+                alt="Cybersecurity operations workspace"
+                style={{ y: heroY, scale: 1.04 }}
+                className="h-[520px] w-full object-cover opacity-80"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#20232e] via-transparent to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 grid border-t border-white/15 bg-[#20232e]/90 text-white backdrop-blur sm:grid-cols-3">
+                {brandStats.map((stat) => (
+                  <div key={stat.label} className="border-b border-white/10 p-5 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0">
+                    <p className="sg-heading text-4xl">{stat.value}</p>
+                    <p className="mt-2 text-xs leading-relaxed text-white/60">{stat.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="absolute -right-4 -top-4 hidden h-32 w-32 border-8 border-[#00B51D] lg:block" />
+            <div className="absolute -bottom-4 -left-4 hidden h-32 w-32 border-8 border-[#0068B8] lg:block" />
+          </motion.div>
         </div>
-
-        {/* Global animations */}
-        <style>{`
-          @keyframes gradient-flow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-          }
-          .animate-gradient-flow {
-            background-size: 200% 200%;
-            animation: gradient-flow 8s ease infinite;
-          }
-
-          @keyframes kente-wave {
-            0% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-5px) rotate(2deg); }
-            100% { transform: translateY(0) rotate(0deg); }
-          }
-          .kente-animate {
-            animation: kente-wave 5s ease-in-out infinite;
-          }
-
-          @keyframes adinkra-spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-          .adinkra-spin {
-            animation: adinkra-spin 20s linear infinite;
-          }
-        `}</style>
       </div>
-    </>
+    </section>
   );
 }

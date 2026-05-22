@@ -8,7 +8,8 @@ const LoginModal = ({
   onSubmit,
   isSubmitting,
   submitSuccess,
-  onForgotPassword
+  onForgotPassword,
+  text,
 }) => {
     const [formData, setFormData] = useState({
         email: '',
@@ -59,7 +60,12 @@ const LoginModal = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            onMouseDown={(event) => {
+                if (event.target === event.currentTarget && !isSubmitting) {
+                    onClose();
+                }
+            }}
+            className="fixed inset-0 z-[100] flex min-h-dvh items-center justify-center overflow-y-auto bg-[#20232e]/70 p-4 py-8 backdrop-blur-md"
         >
             <motion.div 
                 initial={{ y: 20, opacity: 0, scale: 0.95 }}
@@ -75,13 +81,12 @@ const LoginModal = ({
                     damping: 20, 
                     stiffness: 300
                 }}
-                className="relative bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden border border-gray-200"
+                className="relative max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-2xl shadow-black/30 dark:border-white/10 dark:bg-[#111827]"
             >
-                {/* Header with original green colors */}
-                <div className="flex justify-between items-center bg-[#024414] p-5">
+                <div className="flex justify-between items-center bg-[#20232e] p-5">
                     <div className="flex items-center space-x-3">
                         <FiUser className="text-white text-xl" />
-                        <h3 className="text-xl font-semibold text-white">Login to Your Septa-Account</h3>
+                        <h3 className="text-xl font-semibold text-white">{text.loginTitle}</h3>
                     </div>
                     <button
                         onClick={onClose}
@@ -95,7 +100,7 @@ const LoginModal = ({
                 <form onSubmit={handleSubmit} className="p-6 space-y-5">
                     {/* Email Field */}
                     <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700">Email Address</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-white/75">{text.email}</label>
                         <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <FiMail className="h-5 w-5 text-gray-400" />
@@ -105,9 +110,9 @@ const LoginModal = ({
                                 name="email"
                                 value={formData.email}
                                 onChange={handleInputChange}
-                                className={`block w-full pl-10 pr-3 py-2.5 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B51D] focus:border-transparent`}
+                                className={`block w-full pl-10 pr-3 py-2.5 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#00B51D] focus:border-transparent dark:border-white/10 dark:bg-[#102418] dark:text-white`}
                                 disabled={isSubmitting}
-                                placeholder="Enter your email address"
+                                placeholder={text.emailPlaceholder}
                             />
                         </div>
                         {errors.email && (
@@ -124,7 +129,7 @@ const LoginModal = ({
                     {/* Password Field */}
                     <div className="space-y-2">
                         <div className="flex justify-between items-center">
-                            <label className="block text-sm font-medium text-gray-700">Password</label>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-white/75">{text.password}</label>
                             {onForgotPassword && (
                                 <button
                                     type="button"
@@ -132,7 +137,7 @@ const LoginModal = ({
                                     className="text-xs text-[#00B51D] hover:underline font-medium"
                                     disabled={isSubmitting}
                                 >
-                                    Forgot password?
+                                    {text.forgot}
                                 </button>
                             )}
                         </div>
@@ -145,9 +150,9 @@ const LoginModal = ({
                                 name="password"
                                 value={formData.password}
                                 onChange={handleInputChange}
-                                className={`block w-full pl-10 pr-10 py-2.5 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B51D] focus:border-transparent`}
+                                className={`block w-full pl-10 pr-10 py-2.5 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#00B51D] focus:border-transparent dark:border-white/10 dark:bg-[#102418] dark:text-white`}
                                 disabled={isSubmitting}
-                                placeholder="Enter your password"
+                                placeholder={text.passwordPlaceholder}
                             />
                             <button
                                 type="button"
@@ -176,8 +181,8 @@ const LoginModal = ({
                             type="checkbox"
                             className="h-4 w-4 text-[#00B51D] focus:ring-[#00B51D] border-gray-300 rounded"
                         />
-                        <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-                            Remember me
+                        <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700 dark:text-white/70">
+                            {text.remember}
                         </label>
                     </div>
 
@@ -193,7 +198,7 @@ const LoginModal = ({
                             >
                                 <div className="flex items-center justify-center">
                                     <FiCheck className="mr-2" />
-                                    Login successful!
+                                    {text.loginSuccess}
                                 </div>
                             </motion.div>
                         ) : (
@@ -202,7 +207,7 @@ const LoginModal = ({
                                 type="submit"
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
-                                className={`w-full ${isSubmitting ? 'bg-[#024414]/90' : 'bg-[#024414]'} text-white py-2.5 px-4 rounded-lg hover:bg-[#013310] transition-colors font-medium flex items-center justify-center`}
+                                className={`w-full ${isSubmitting ? 'bg-[#20232e]/90' : 'bg-[#20232e]'} text-white py-2.5 px-4 rounded-lg hover:bg-[#20232e] transition-colors font-medium flex items-center justify-center`}
                                 disabled={isSubmitting}
                             >
                                 {isSubmitting ? (
@@ -211,10 +216,10 @@ const LoginModal = ({
                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                         </svg>
-                                        Signing in...
+                                        {text.signingIn}
                                     </>
                                 ) : (
-                                    'Sign In'
+                                    text.signIn
                                 )}
                             </motion.button>
                         )}
@@ -222,15 +227,15 @@ const LoginModal = ({
 
                     {/* Sign Up Link */}
                     <div className="text-center pt-2">
-                        <p className="text-sm text-gray-600">
-                            Don't have an account?{' '}
+                        <p className="text-sm text-gray-600 dark:text-white/60">
+                            {text.noAccount}{' '}
                             <button
                                 type="button"
                                 onClick={onSwitchToSignup}
                                 className="font-medium text-[#00B51D] hover:underline"
                                 disabled={isSubmitting}
                             >
-                                Sign up
+                                {text.signUp}
                             </button>
                         </p>
                     </div>

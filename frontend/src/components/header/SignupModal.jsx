@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FiX, FiAlertCircle, FiCheck } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 
-const SignupModal = ({ onClose, onSwitchToLogin, onSubmit, isSubmitting, submitSuccess }) => {
+const SignupModal = ({ onClose, onSwitchToLogin, onSubmit, isSubmitting, submitSuccess, text }) => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -78,16 +78,21 @@ const SignupModal = ({ onClose, onSwitchToLogin, onSubmit, isSubmitting, submitS
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4"
+            onMouseDown={(event) => {
+                if (event.target === event.currentTarget && !isSubmitting) {
+                    onClose();
+                }
+            }}
+            className="fixed inset-0 z-[100] flex min-h-dvh items-center justify-center overflow-y-auto bg-[#20232e]/70 p-4 py-8 backdrop-blur-md"
         >
             <motion.div 
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -20, opacity: 0 }}
-                className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-200"
+                className="max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-2xl shadow-black/30 dark:border-white/10 dark:bg-[#111827]"
             >
-                <div className="flex justify-between items-center bg-[#024414] p-4">
-                    <h3 className="text-lg font-semibold text-white">Create New Account</h3>
+                <div className="flex justify-between items-center bg-[#20232e] p-4">
+                    <h3 className="text-lg font-semibold text-white">{text.signupTitle}</h3>
                     <button
                         onClick={onClose}
                         className="text-white hover:text-[#00B51D] transition-colors"
@@ -99,13 +104,13 @@ const SignupModal = ({ onClose, onSwitchToLogin, onSubmit, isSubmitting, submitS
 
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
                     <div className="space-y-1">
-                        <label className="block text-sm font-medium text-gray-700">Full Name</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-white/75">{text.fullName}</label>
                         <input
                             type="text"
                             name="name"
                             value={formData.name}
                             onChange={handleInputChange}
-                            className={`w-full px-4 py-2 text-sm border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B51D] focus:border-transparent`}
+                            className={`w-full px-4 py-2 text-sm border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#00B51D] focus:border-transparent dark:border-white/10 dark:bg-[#102418] dark:text-white`}
                             disabled={isSubmitting}
                         />
                         {errors.name && (
@@ -116,13 +121,13 @@ const SignupModal = ({ onClose, onSwitchToLogin, onSubmit, isSubmitting, submitS
                     </div>
 
                     <div className="space-y-1">
-                        <label className="block text-sm font-medium text-gray-700">Email</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-white/75">{text.email}</label>
                         <input
                             type="email"
                             name="email"
                             value={formData.email}
                             onChange={handleInputChange}
-                            className={`w-full px-4 py-2 text-sm border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B51D] focus:border-transparent`}
+                            className={`w-full px-4 py-2 text-sm border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#00B51D] focus:border-transparent dark:border-white/10 dark:bg-[#102418] dark:text-white`}
                             disabled={isSubmitting}
                         />
                         {errors.email && (
@@ -133,13 +138,13 @@ const SignupModal = ({ onClose, onSwitchToLogin, onSubmit, isSubmitting, submitS
                     </div>
 
                     <div className="space-y-1">
-                        <label className="block text-sm font-medium text-gray-700">Password</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-white/75">{text.password}</label>
                         <input
                             type="password"
                             name="password"
                             value={formData.password}
                             onChange={handleInputChange}
-                            className={`w-full px-4 py-2 text-sm border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B51D] focus:border-transparent`}
+                            className={`w-full px-4 py-2 text-sm border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#00B51D] focus:border-transparent dark:border-white/10 dark:bg-[#102418] dark:text-white`}
                             disabled={isSubmitting}
                         />
                         {errors.password && (
@@ -150,22 +155,22 @@ const SignupModal = ({ onClose, onSwitchToLogin, onSubmit, isSubmitting, submitS
                         
                         {formData.password && (
                             <div className="mt-2 space-y-1">
-                                <p className="text-xs text-gray-600">Password must contain:</p>
+                                <p className="text-xs text-gray-600 dark:text-white/60">{text.passwordRules}</p>
                                 <ul className="text-xs space-y-1">
                                     <li className={`flex items-center ${passwordStrength.length ? 'text-green-600' : 'text-gray-400'}`}>
-                                        <FiCheck className="mr-1" size={12} /> At least 8 characters
+                                        <FiCheck className="mr-1" size={12} /> {text.ruleLength}
                                     </li>
                                     <li className={`flex items-center ${passwordStrength.uppercase ? 'text-green-600' : 'text-gray-400'}`}>
-                                        <FiCheck className="mr-1" size={12} /> One uppercase letter
+                                        <FiCheck className="mr-1" size={12} /> {text.ruleUppercase}
                                     </li>
                                     <li className={`flex items-center ${passwordStrength.lowercase ? 'text-green-600' : 'text-gray-400'}`}>
-                                        <FiCheck className="mr-1" size={12} /> One lowercase letter
+                                        <FiCheck className="mr-1" size={12} /> {text.ruleLowercase}
                                     </li>
                                     <li className={`flex items-center ${passwordStrength.number ? 'text-green-600' : 'text-gray-400'}`}>
-                                        <FiCheck className="mr-1" size={12} /> One number
+                                        <FiCheck className="mr-1" size={12} /> {text.ruleNumber}
                                     </li>
                                     <li className={`flex items-center ${passwordStrength.specialChar ? 'text-green-600' : 'text-gray-400'}`}>
-                                        <FiCheck className="mr-1" size={12} /> One special character
+                                        <FiCheck className="mr-1" size={12} /> {text.ruleSpecial}
                                     </li>
                                 </ul>
                             </div>
@@ -173,13 +178,13 @@ const SignupModal = ({ onClose, onSwitchToLogin, onSubmit, isSubmitting, submitS
                     </div>
 
                     <div className="space-y-1">
-                        <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-white/75">{text.confirmPassword}</label>
                         <input
                             type="password"
                             name="confirmPassword"
                             value={formData.confirmPassword}
                             onChange={handleInputChange}
-                            className={`w-full px-4 py-2 text-sm border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B51D] focus:border-transparent`}
+                            className={`w-full px-4 py-2 text-sm border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'} rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#00B51D] focus:border-transparent dark:border-white/10 dark:bg-[#102418] dark:text-white`}
                             disabled={isSubmitting}
                         />
                         {errors.confirmPassword && (
@@ -197,13 +202,13 @@ const SignupModal = ({ onClose, onSwitchToLogin, onSubmit, isSubmitting, submitS
                         >
                             <div className="flex items-center">
                                 <FiCheck className="mr-2" />
-                                Account created successfully!
+                                {text.signupSuccess}
                             </div>
                         </motion.div>
                     ) : (
                         <motion.button
                             type="submit"
-                            className={`w-full ${isSubmitting ? 'bg-[#024414]/80' : 'bg-[#024414]'} text-white py-2.5 px-4 rounded-lg hover:bg-[#013310] transition-colors font-medium mt-2 flex items-center justify-center`}
+                            className={`w-full ${isSubmitting ? 'bg-[#20232e]/80' : 'bg-[#20232e]'} text-white py-2.5 px-4 rounded-lg hover:bg-[#20232e] transition-colors font-medium mt-2 flex items-center justify-center`}
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? (
@@ -212,10 +217,10 @@ const SignupModal = ({ onClose, onSwitchToLogin, onSubmit, isSubmitting, submitS
                                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                     </svg>
-                                    Processing...
+                                    {text.processing}
                                 </>
                             ) : (
-                                'Sign Up'
+                                text.signUp
                             )}
                         </motion.button>
                     )}
@@ -227,7 +232,7 @@ const SignupModal = ({ onClose, onSwitchToLogin, onSubmit, isSubmitting, submitS
                             className="text-sm text-[#00B51D] hover:underline font-medium"
                             disabled={isSubmitting}
                         >
-                            Already have an account? Login
+                            {text.hasAccount}
                         </button>
                     </div>
                 </form>

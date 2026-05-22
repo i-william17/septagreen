@@ -10,6 +10,12 @@ import Blogs from "./components/blogs/Blogs";
 import Loader from "./components/loader/Loader";
 import Clients from "./components/identity/sections/clients";
 import Identity from "./components/identity/Identity";
+import ServicePage from "./components/pages/ServicePage";
+import SolutionPage from "./components/pages/SolutionPage";
+import ContactPage from "./components/pages/ContactPage";
+import InsightsPage from "./components/pages/InsightsPage";
+import UtilityPage from "./components/pages/UtilityPage";
+import { SitePreferencesProvider } from "./context/SitePreferences";
 
 
 const App = () => {
@@ -19,7 +25,7 @@ const App = () => {
     // Simulate loading all resources
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 3500);
+    }, 1600);
 
     return () => clearTimeout(timer);
   }, []);
@@ -29,26 +35,37 @@ const App = () => {
   }
 
   return (
-    <Router>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <>
-              <Header />
-              <Welcome />
-              <MidSection />
-              <Clients />
-              <Hero />
-              <Testimonials />
-              <Blogs />
-              <Footer />
-            </>
-          }
-        />
-        <Route path="/identity" element={<Identity />} />
-      </Routes>
-    </Router>
+    <SitePreferencesProvider>
+      <Router>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <Header />
+                <Welcome />
+                <MidSection />
+                <Clients />
+                <Hero />
+                <Testimonials />
+                <Blogs />
+                <Footer />
+              </>
+            }
+          />
+          <Route path="/identity" element={<Identity />} />
+          <Route path="/services/:slug" element={<ServicePage />} />
+          <Route path="/solutions/:slug" element={<SolutionPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/insights" element={<InsightsPage />} />
+          <Route path="/careers" element={<UtilityPage type="careers" />} />
+          <Route path="/careers/:slug" element={<UtilityPage type="careers" />} />
+          <Route path="/chat-support" element={<UtilityPage type="chat-support" />} />
+          <Route path="/shop" element={<UtilityPage type="shop" />} />
+          <Route path="/developerx" element={<UtilityPage type="developerx" />} />
+        </Routes>
+      </Router>
+    </SitePreferencesProvider>
   );
 };
 

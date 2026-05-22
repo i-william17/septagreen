@@ -5,17 +5,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://api.fontshare.com/v2/css?f[]=chillax@400,500,700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Oswald:wght@300;400;500;600;700&display=swap');
 
 :root {
   --background: #ffffff;
-  --foreground: #000000;
-  --primary: #1a73e8;
-  --secondary: #fbbc05;
-  --accent: #34a853;
+  --foreground: #20232e;
+  --primary: #0068B8;
+  --secondary: #00B51D;
+  --accent: #00B51D;
   --error: #ea4335;
-  --warning: #fbbc05;
-  --info: #4285f4;
-  --success: #34a853;
+  --warning: #0068B8;
+  --info: #0068B8;
+  --success: #00B51D;
+  --septa-deep: #20232e;
+  --septa-green: #00B51D;
+  --septa-blue: #0068B8;
+  --septa-slate: #3c5164;
+  --septa-ink: #20232e;
+  --septa-black: #050608;
+  --septa-soft: #f3f7f6;
+  --septa-line: #d8e0df;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -28,9 +37,142 @@
 body {
   background: var(--background);
   color: var(--foreground);
-    font-family: 'Poppins', sans-serif;
+  font-family: 'Montserrat', 'Poppins', sans-serif;
   font-weight: 400;
   font-style: normal;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark body {
+  --background: #050608;
+  --foreground: #f5f8f4;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body.menu-open {
+  overflow: hidden;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+.sg-brand-logo {
+  transition: filter 0.25s ease, opacity 0.25s ease;
+}
+
+html.dark .sg-brand-logo {
+  filter: grayscale(1) brightness(0) invert(1);
+}
+
+a {
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--septa-blue);
+  color: #ffffff;
+}
+
+.sg-shell {
+  width: min(100% - 32px, 1160px);
+  margin-inline: auto;
+}
+
+.sg-display {
+  font-family: 'Oswald', 'Montserrat', sans-serif;
+  font-size: clamp(4rem, 9.2vw, 8.4rem);
+  font-weight: 500;
+  line-height: 0.96;
+  letter-spacing: 0;
+}
+
+.sg-section-title {
+  font-family: 'Oswald', 'Montserrat', sans-serif;
+  font-size: clamp(3rem, 5.6vw, 5.7rem);
+  font-weight: 500;
+  line-height: 0.98;
+  letter-spacing: 0;
+}
+
+.sg-body-large {
+  font-size: clamp(1.1rem, 1.75vw, 1.55rem);
+  line-height: 1.45;
+  letter-spacing: 0;
+}
+
+.sg-kicker {
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.sg-grid-pattern {
+  background-image:
+    linear-gradient(rgba(0, 104, 184, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 181, 29, 0.07) 1px, transparent 1px);
+  background-size: 54px 54px;
+}
+
+.sg-heading {
+  font-family: 'Oswald', 'Montserrat', sans-serif;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.sg-link-line {
+  position: relative;
+}
+
+.sg-link-line::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.2rem;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.35s ease;
+}
+
+.sg-link-line:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.sg-marquee {
+  animation: sg-marquee 28s linear infinite;
+}
+
+@keyframes sg-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
 }
 
 .cal-sans-regular {

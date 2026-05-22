@@ -1,511 +1,528 @@
-import { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { gsap } from 'gsap';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
+import {
+  FiArrowRight,
+  FiBriefcase,
+  FiChevronDown,
+  FiCode,
+  FiGlobe,
+  FiHeadphones,
+  FiInfo,
+  FiMenu,
+  FiMessageSquare,
+  FiMoon,
+  FiSearch,
+  FiShield,
+  FiShoppingBag,
+  FiSun,
+  FiX,
+} from 'react-icons/fi';
 import TopBar from './Topbar';
-import { FiSearch, FiX, FiMenu, FiHome, FiInfo, FiBriefcase, FiMessageSquare, FiShoppingBag, FiCode, FiShield, FiGlobe, FiShoppingCart, FiServer } from 'react-icons/fi';
+import { serviceGroups, services, solutions } from '../../data/siteContent';
+import { useSitePreferences } from '../../context/SitePreferences';
+
+const MAX_Z_INDEX = 2147483647;
+
+const navLinkClass = ({ isActive }) =>
+  `sg-link-line text-sm font-semibold transition-colors ${isActive
+    ? 'text-[#0068B8]'
+    : 'text-[#20232e]/80 hover:text-[#0068B8] dark:text-white/75 dark:hover:text-white'
+  }`;
+
+const resourceLinks = [
+  { href: '/developerx', labelKey: 'developers', icon: FiCode },
+  { href: '/careers', labelKey: 'careers', icon: FiBriefcase },
+  { href: '/shop', labelKey: 'shop', icon: FiShoppingBag },
+  { href: '/chat-support', labelKey: 'support', icon: FiHeadphones },
+];
+
+const MegaMenu = ({ onNavigate, text }) => (
+  <div className="grid gap-6 lg:grid-cols-[1.1fr_1fr]">
+    <div className="grid gap-4 md:grid-cols-3">
+      {serviceGroups.map((group) => (
+        <div key={group.heading} className="border-l border-[#20232e]/15 pl-4 dark:border-white/10">
+          <p className="text-sm font-bold text-[#0068B8]">{group.heading}</p>
+
+          <p className="mt-2 text-xs leading-relaxed text-[#20232e]/55 dark:text-white/50">
+            {group.description}
+          </p>
+
+          <div className="mt-4 space-y-2">
+            {group.links.map((slug) => {
+              const service = services.find((item) => item.slug === slug);
+              if (!service) return null;
+
+              return (
+                <Link
+                  key={slug}
+                  to={`/services/${slug}`}
+                  onClick={onNavigate}
+                  className="group flex items-center justify-between gap-3 px-3 py-2 text-sm font-semibold text-[#20232e]/75 transition hover:bg-[#f3f7f6] hover:text-[#0068B8] dark:text-white/75 dark:hover:bg-white/10 dark:hover:text-white"
+                >
+                  {service.shortTitle}
+                  <FiArrowRight className="h-4 w-4 text-[#00B51D] transition group-hover:translate-x-1" />
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div className="border border-[#20232e]/10 bg-[#f3f7f6] p-5 dark:border-white/10 dark:bg-white/5">
+      <p className="text-xs font-semibold uppercase text-[#20232e]/45 dark:text-white/40">
+        {text.nav.solutions}
+      </p>
+
+      <div className="mt-4 space-y-3">
+        {solutions.map((solution) => (
+          <Link
+            key={solution.slug}
+            to={`/solutions/${solution.slug}`}
+            onClick={onNavigate}
+            className="group block border-b border-[#20232e]/10 pb-3 last:border-b-0 dark:border-white/10"
+          >
+            <span className="flex items-center justify-between text-sm font-semibold text-[#20232e] dark:text-white">
+              {solution.title}
+              <FiArrowRight className="h-4 w-4 text-[#00B51D] transition group-hover:translate-x-1" />
+            </span>
+
+            <span className="mt-1 block text-xs leading-relaxed text-[#20232e]/55 dark:text-white/50">
+              {solution.summary}
+            </span>
+          </Link>
+        ))}
+      </div>
+    </div>
+  </div>
+);
 
 const Navbar = () => {
+  const { language, text, theme, toggleLanguage, toggleTheme } = useSitePreferences();
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(false);
+  const [megaOpen, setMegaOpen] = useState(false);
+  const [resourcesOpen, setResourcesOpen] = useState(false);
+  const [query, setQuery] = useState('');
+
   const location = useLocation();
-  
-  const handleCloseMenu = () => {
-    setIsMobileMenuOpen(false);
-    setServicesOpen(false);
-  };
-  
-  const toggleServices = () => setServicesOpen((prev) => !prev);
+  const searchRef = useRef(null);
 
-  // Initialize animations and scroll listener
   useEffect(() => {
-    // GSAP Animations
-    gsap.from('.logo, .nav-links li, .search-container', {
-      duration: 1,
-      opacity: 0,
-      y: -20,
-      stagger: 0.2,
-      ease: "power3.out",
-    });
+    const handleScroll = () => setIsScrolled(window.scrollY > 12);
 
-    // Scroll event listener
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-    
+    handleScroll();
     window.addEventListener('scroll', handleScroll);
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+    setIsSearchActive(false);
+    setMegaOpen(false);
+    setResourcesOpen(false);
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, [location.pathname]);
+
+  useEffect(() => {
+    document.body.classList.toggle('menu-open', isMobileMenuOpen);
+    document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
+
+    return () => {
+      document.body.classList.remove('menu-open');
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen]);
+
+  useEffect(() => {
+    if (!isSearchActive) return undefined;
+
+    const closeOnOutsideClick = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setIsSearchActive(false);
+      }
+    };
+
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') {
+        setIsSearchActive(false);
+      }
+    };
+
+    document.addEventListener('mousedown', closeOnOutsideClick);
+    document.addEventListener('keydown', closeOnEscape);
+
+    return () => {
+      document.removeEventListener('mousedown', closeOnOutsideClick);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [isSearchActive]);
+
+  const searchResults = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+
+    if (!normalized) return services.slice(0, 4);
+
+    return services
+      .filter((service) =>
+        `${service.title} ${service.category} ${service.summary}`.toLowerCase().includes(normalized)
+      )
+      .slice(0, 5);
+  }, [query]);
+
+  const closeMenus = () => {
+    setIsMobileMenuOpen(false);
+    setMegaOpen(false);
+    setResourcesOpen(false);
+    setIsSearchActive(false);
   };
 
-  const toggleSearch = () => {
-    setIsSearchActive(!isSearchActive);
-  };
+  const logoClass = 'sg-brand-logo h-auto w-32 object-contain sm:w-44 lg:w-52';
 
-  // Check if current route is active
-  const isActiveRoute = (path) => {
-    return location.pathname === path;
-  };
+  const navThemeClass =
+    theme === 'dark'
+      ? isScrolled
+        ? 'border-b border-white/10 bg-[#050608]/95 shadow-xl shadow-black/40 backdrop-blur-xl'
+        : 'border-b border-white/10 bg-[#050608]/95 backdrop-blur-xl'
+      : isScrolled
+        ? 'border-b border-[#20232e]/10 bg-white/95 shadow-xl shadow-black/10 backdrop-blur-xl'
+        : 'border-b border-[#20232e]/10 bg-white/95 backdrop-blur-xl';
 
   return (
-    <nav className={`
-      fixed top-0 w-full z-50 transition-all duration-300
-      ${isScrolled ? 'py-2 bg-black/95 backdrop-blur-md shadow-md' : 'py-4 bg-transparent'}
-    `}>
-      <TopBar />
-      <div className="container mx-auto px-6 flex justify-between items-center h-16 mt-4 z-100">
-        {/* Logo with image - inverted on scroll */}
-        <div className="flex items-center z-100">
-          <Link to="/" className="logo flex items-center">
-            <img
-              src="/nobg.png"
-              alt="Logo"
-              width={200}
-              height={200}
-              className={`mr-3 transition-all duration-300 ${
-                isScrolled ? 'filter invert brightness-0' : ''
-              }`}
-            />
+    <>
+      <nav
+        className={`fixed inset-x-0 top-0 isolate transition-all duration-300 ${navThemeClass}`}
+        style={{ zIndex: MAX_Z_INDEX }}
+      >
+        <TopBar />
+
+        <div className="sg-shell flex h-20 items-center justify-between gap-4 max-lg:h-16 max-lg:px-4">
+          <Link to="/" className="flex items-center" aria-label="SeptaGreen home">
+            <img src="/septagreen-logo.png" alt="SeptaGreen" className={logoClass} />
           </Link>
-        </div>
 
-        {/* Desktop Nav Links with React Router */}
-        <ul className="hidden md:flex items-center gap-8">
-          <li>
-            <Link 
-              to="/" 
-              className={`transition-colors font-medium flex items-center ${
-                isScrolled 
-                  ? `text-white hover:text-[#00B51D] ${isActiveRoute('/') ? 'text-[#00B51D]' : ''}`
-                  : `text-black hover:text-[#00B51D] ${isActiveRoute('/') ? 'text-[#00B51D]' : ''}`
-              }`}
+          <div className="hidden items-center gap-5 xl:gap-7 lg:flex">
+            <div
+              className="relative"
+              onMouseEnter={() => setMegaOpen(true)}
+              onMouseLeave={() => setMegaOpen(false)}
             >
-              <FiHome className="mr-1" /> Home
-            </Link>
-          </li>
-          <li>
-            <Link 
-              to="/identity" 
-              className={`transition-colors font-medium flex items-center ${
-                isScrolled 
-                  ? `text-white hover:text-[#00B51D] ${isActiveRoute('/identity') ? 'text-[#00B51D]' : ''}`
-                  : `text-black hover:text-[#00B51D] ${isActiveRoute('/identity') ? 'text-[#00B51D]' : ''}`
-              }`}
-            >
-              <FiInfo className="mr-1" /> Identity
-            </Link>
-          </li>
+              <button
+                type="button"
+                onFocus={() => setMegaOpen(true)}
+                className="flex items-center gap-1 text-sm font-semibold text-[#20232e]/80 transition hover:text-[#0068B8] dark:text-white/80 dark:hover:text-white"
+              >
+                {text.nav.services}
+                <FiChevronDown className={`h-4 w-4 transition ${megaOpen ? 'rotate-180' : ''}`} />
+              </button>
 
-          {/* Mega Dropdown */}
-          <li className="relative group">
-            <button className={`transition-colors font-medium flex items-center ${
-              isScrolled 
-                ? 'text-white hover:text-[#00B51D]' 
-                : 'text-black hover:text-[#00B51D]'
-            }`}>
-              <FiBriefcase className="mr-1" /> Services
-              <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            <div className={`absolute left-0 top-full mt-2 w-[600px] rounded-lg shadow-xl p-6 hidden group-hover:grid grid-cols-2 gap-6 transition-all duration-300 border ${
-              isScrolled ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'
-            }`}>
-              <div>
-                <h4 className={`text-lg font-semibold mb-4 flex items-center ${
-                  isScrolled ? 'text-[#00B51D]' : 'text-[#024414]'
-                }`}>
-                  <FiGlobe className="mr-2" /> Web Solutions
-                </h4>
-                <ul className="space-y-3">
-                  <li>
-                    <Link to="/services/web-development" className={`hover:text-[#00B51D] flex items-center ${
-                      isScrolled ? 'text-gray-300' : 'text-gray-800'
-                    }`}>
-                      <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                      Web Development
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/services/ecommerce" className={`hover:text-[#00B51D] flex items-center ${
-                      isScrolled ? 'text-gray-300' : 'text-gray-800'
-                    }`}>
-                      <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                      E-Commerce
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/services/seo" className={`hover:text-[#00B51D] flex items-center ${
-                      isScrolled ? 'text-gray-300' : 'text-gray-800'
-                    }`}>
-                      <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                      SEO Optimization
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h4 className={`text-lg font-semibold mb-4 flex items-center ${
-                  isScrolled ? 'text-[#00B51D]' : 'text-[#024414]'
-                }`}>
-                  <FiShield className="mr-2" /> Cybersecurity
-                </h4>
-                <ul className="space-y-3">
-                  <li>
-                    <Link to="/services/vulnerability-assessment" className={`hover:text-[#00B51D] flex items-center ${
-                      isScrolled ? 'text-gray-300' : 'text-gray-800'
-                    }`}>
-                      <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                      Vulnerability Assessment
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/services/penetration-testing" className={`hover:text-[#00B51D] flex items-center ${
-                      isScrolled ? 'text-gray-300' : 'text-gray-800'
-                    }`}>
-                      <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                      Penetration Testing
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/services/security-monitoring" className={`hover:text-[#00B51D] flex items-center ${
-                      isScrolled ? 'text-gray-300' : 'text-gray-800'
-                    }`}>
-                      <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                      Security Monitoring
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/services/cloud-security" className={`hover:text-[#00B51D] flex items-center ${
-                      isScrolled ? 'text-gray-300' : 'text-gray-800'
-                    }`}>
-                      <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                      Cloud Security
-                    </Link>
-                  </li>
-                </ul>
+              <div
+                className={`absolute left-1/2 top-full w-[min(88vw,920px)] -translate-x-1/2 pt-5 transition ${megaOpen
+                    ? 'pointer-events-auto translate-y-0 opacity-100'
+                    : 'pointer-events-none -translate-y-2 opacity-0'
+                  }`}
+                style={{ zIndex: MAX_Z_INDEX }}
+              >
+                <div className="border border-[#20232e]/10 bg-white/95 p-6 shadow-2xl shadow-black/20 backdrop-blur-xl dark:border-white/10 dark:bg-[#20232e]/95">
+                  <MegaMenu onNavigate={closeMenus} text={text} />
+                </div>
               </div>
             </div>
-          </li>
 
-          <li className="relative group">
-            <button className={`transition-colors font-medium flex items-center ${
-              isScrolled 
-                ? 'text-white hover:text-[#00B51D]' 
-                : 'text-black hover:text-[#00B51D]'
-            }`}>
-              <FiServer className="mr-1" /> Careers
-              <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            <div className={`absolute left-0 top-full mt-2 w-[600px] rounded-lg shadow-xl p-6 hidden group-hover:grid grid-cols-2 gap-6 transition-all duration-300 border ${
-              isScrolled ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'
-            }`}>
-              <div>
-                <h4 className={`text-lg font-semibold mb-4 flex items-center ${
-                  isScrolled ? 'text-[#00B51D]' : 'text-[#024414]'
-                }`}>
-                  Join Us
-                </h4>
-                <ul className="space-y-3">
-                  <li>
-                    <Link to="/careers/septa-crew" className={`hover:text-[#00B51D] flex items-center ${
-                      isScrolled ? 'text-gray-300' : 'text-gray-800'
-                    }`}>
-                      <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                      Septa-Crew
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/careers/septa-squad" className={`hover:text-[#00B51D] flex items-center ${
-                      isScrolled ? 'text-gray-300' : 'text-gray-800'
-                    }`}>
-                      <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                      Septa-Squad
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/careers/septa-club" className={`hover:text-[#00B51D] flex items-center ${
-                      isScrolled ? 'text-gray-300' : 'text-gray-800'
-                    }`}>
-                      <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                      Septa-Club
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/careers/septa-cyberacademy" className={`hover:text-[#00B51D] flex items-center ${
-                      isScrolled ? 'text-gray-300' : 'text-gray-800'
-                    }`}>
-                      <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                      Septa-CyberAcademy
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h4 className={`text-lg font-semibold mb-4 flex items-center ${
-                  isScrolled ? 'text-[#00B51D]' : 'text-[#024414]'
-                }`}>
-                  Our Team
-                </h4>
-                <ul className="space-y-3">
-                  <li>
-                    <Link to="/careers/departments" className={`hover:text-[#00B51D] flex items-center ${
-                      isScrolled ? 'text-gray-300' : 'text-gray-800'
-                    }`}>
-                      <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                      Departments
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/careers/structure" className={`hover:text-[#00B51D] flex items-center ${
-                      isScrolled ? 'text-gray-300' : 'text-gray-800'
-                    }`}>
-                      <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                      Our Structure
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </li>
-          
-          <li>
-            <Link 
-              to="/chat-support" 
-              className={`transition-colors font-medium flex items-center ${
-                isScrolled 
-                  ? `text-white hover:text-[#00B51D] ${isActiveRoute('/chat-support') ? 'text-[#00B51D]' : ''}`
-                  : `text-black hover:text-[#00B51D] ${isActiveRoute('/chat-support') ? 'text-[#00B51D]' : ''}`
-              }`}
-            >
-              <FiMessageSquare className="mr-1" /> Talk to Xempi
-            </Link>
-          </li>
-          
-          <li>
-            <Link 
-              to="/shop" 
-              className={`transition-colors font-medium flex items-center ${
-                isScrolled 
-                  ? `text-white hover:text-[#00B51D] ${isActiveRoute('/shop') ? 'text-[#00B51D]' : ''}`
-                  : `text-black hover:text-[#00B51D] ${isActiveRoute('/shop') ? 'text-[#00B51D]' : ''}`
-              }`}
-            >
-              <FiShoppingBag className="mr-1" /> Shop
-            </Link>
-          </li>
-          
-          <li>
-            <Link 
-              to="/developerx" 
-              className={`transition-colors font-medium flex items-center ${
-                isScrolled 
-                  ? `text-white hover:text-[#00B51D] ${isActiveRoute('/developerx') ? 'text-[#00B51D]' : ''}`
-                  : `text-black hover:text-[#00B51D] ${isActiveRoute('/developerx') ? 'text-[#00B51D]' : ''}`
-              }`}
-            >
-              <FiCode className="mr-1" /> DeveloperX 2.0
-            </Link>
-          </li>
-        </ul>
+            <NavLink to="/identity" className={navLinkClass}>
+              {text.nav.identity}
+            </NavLink>
 
-        {/* Right side controls */}
-        <div className="flex items-center gap-6">
-          {/* Search */}
-          <div className="relative">
-            <button
-              onClick={toggleSearch}
-              className={`p-2 rounded-full transition-colors ${
-                isScrolled ? 'hover:bg-gray-800 text-white' : 'hover:bg-gray-100 text-black'
-              }`}
-              aria-label="Search"
+            <NavLink to="/insights" className={navLinkClass}>
+              {text.nav.insights}
+            </NavLink>
+
+            <NavLink to="/developerx" className={navLinkClass}>
+              {text.nav.developers}
+            </NavLink>
+
+            <NavLink to="/contact" className={navLinkClass}>
+              {text.nav.contact}
+            </NavLink>
+
+            <div
+              className="relative"
+              onMouseEnter={() => setResourcesOpen(true)}
+              onMouseLeave={() => setResourcesOpen(false)}
             >
-              {isSearchActive ? <FiX size={20} /> : <FiSearch size={20} />}
-            </button>
-            <div className={`
-              absolute right-0 top-full mt-2 w-64 shadow-lg rounded-lg overflow-hidden
-              transition-all duration-300 transform origin-top border
-              ${isSearchActive ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0'}
-              ${isScrolled ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}
-            `}>
-              <input
-                type="text"
-                placeholder="Search..."
-                className={`w-full p-3 focus:outline-none ${
-                  isScrolled ? 'bg-gray-700 text-white placeholder-gray-400' : 'bg-gray-50 text-black'
-                }`}
-              />
+              <button
+                type="button"
+                onFocus={() => setResourcesOpen(true)}
+                className="flex items-center gap-1 text-sm font-semibold text-[#20232e]/80 transition hover:text-[#0068B8] dark:text-white/75 dark:hover:text-white"
+              >
+                {text.nav.more}
+                <FiChevronDown className={`h-4 w-4 transition ${resourcesOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              <div
+                className={`absolute right-0 top-full w-56 pt-4 transition ${resourcesOpen
+                    ? 'pointer-events-auto translate-y-0 opacity-100'
+                    : 'pointer-events-none -translate-y-2 opacity-0'
+                  }`}
+                style={{ zIndex: MAX_Z_INDEX }}
+              >
+                <div className="border border-[#20232e]/10 bg-white/95 p-2 shadow-2xl shadow-black/20 backdrop-blur-xl dark:border-white/10 dark:bg-[#20232e]/95">
+                  {resourceLinks.slice(1).map(({ href, labelKey, icon: Icon }) => (
+                    <Link
+                      key={href}
+                      to={href}
+                      onClick={closeMenus}
+                      className="flex items-center gap-3 px-3 py-3 text-sm font-semibold text-[#20232e]/75 transition hover:bg-[#f3f7f6] hover:text-[#0068B8] dark:text-white/75 dark:hover:bg-white/10 dark:hover:text-white"
+                    >
+                      <Icon className="h-4 w-4 text-[#0068B8]" />
+                      {text.nav[labelKey]}
+                    </Link>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Mobile menu button */}
-          <button
-            onClick={toggleMobileMenu}
-            className={`md:hidden p-2 rounded-full transition-colors ${
-              isScrolled ? 'hover:bg-gray-800 text-white' : 'hover:bg-gray-100 text-black'
-            }`}
-            aria-label="Toggle menu"
-          >
-            {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
-          </button>
-        </div>
-      </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="hidden h-10 w-10 items-center justify-center border border-[#20232e]/15 text-[#20232e] transition hover:border-[#0068B8] hover:text-[#0068B8] dark:border-white/15 dark:text-white sm:flex"
+              aria-label={theme === 'dark' ? text.controls.themeLight : text.controls.themeDark}
+              title={theme === 'dark' ? text.controls.themeLight : text.controls.themeDark}
+            >
+              {theme === 'dark' ? <FiSun /> : <FiMoon />}
+            </button>
 
-      {/* Mobile Menu with React Router */}
-      <div
-        className={`
-          md:hidden fixed inset-0 z-50 pt-6 px-4
-          transition-all duration-500 ease-in-out transform overflow-hidden
-          ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}
-          bg-gray-900
-        `}
-      >
-        {/* Close Button */}
-        <button
-          onClick={handleCloseMenu}
-          className="absolute top-4 right-4 text-gray-300 hover:text-[#00B51D] text-3xl"
-          aria-label="Close menu"
-        >
-          &times;
-        </button>
+            <button
+              type="button"
+              onClick={toggleLanguage}
+              className="hidden h-10 items-center gap-2 border border-[#20232e]/15 px-3 text-xs font-bold text-[#20232e] transition hover:border-[#0068B8] hover:text-[#0068B8] dark:border-white/15 dark:text-white sm:flex"
+              aria-label={text.controls.language}
+              title={text.controls.language}
+            >
+              <FiGlobe className="h-4 w-4" />
+              {language === 'en' ? text.controls.english : text.controls.swahili}
+            </button>
 
-        <div className="container mx-auto pt-12">
-          <ul className="flex flex-col gap-4 py-4">
-            <li>
-              <Link
-                to="/"
-                onClick={handleCloseMenu}
-                className={`text-xl font-medium flex items-center ${
-                  isActiveRoute('/') ? 'text-[#00B51D]' : 'text-white hover:text-[#00B51D]'
-                }`}
-              >
-                <FiHome className="mr-2" /> Home
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/identity"
-                onClick={handleCloseMenu}
-                className={`text-xl font-medium flex items-center ${
-                  isActiveRoute('/identity') ? 'text-[#00B51D]' : 'text-white hover:text-[#00B51D]'
-                }`}
-              >
-                <FiInfo className="mr-2" /> Identity
-              </Link>
-            </li>
-            <li>
+            <div ref={searchRef} className="relative hidden sm:block">
               <button
-                onClick={toggleServices}
-                className="w-full text-left text-xl font-medium text-white hover:text-[#00B51D] flex items-center justify-between"
+                type="button"
+                onClick={() => setIsSearchActive((value) => !value)}
+                className="flex h-10 w-10 items-center justify-center border border-[#20232e]/15 text-[#20232e] transition hover:border-[#0068B8] hover:text-[#0068B8] dark:border-white/15 dark:text-white"
+                aria-label={text.nav.searchServices}
               >
-                <span className="flex items-center">
-                  <FiBriefcase className="mr-2" /> Services
-                </span>
-                <svg
-                  className={`w-4 h-4 transform transition-transform ${
-                    servicesOpen ? 'rotate-180' : 'rotate-0'
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M19 9l-7 7-7-7" />
-                </svg>
+                {isSearchActive ? <FiX /> : <FiSearch />}
               </button>
 
-              <ul
-                className={`mt-2 pl-4 border-l-2 border-[#00B51D] space-y-2 transition-all duration-300 ${
-                  servicesOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
-                }`}
+              <div
+                className={`absolute right-0 top-12 w-80 overflow-hidden border border-[#20232e]/10 bg-white shadow-2xl transition dark:border-white/10 dark:bg-[#20232e] ${isSearchActive
+                    ? 'pointer-events-auto translate-y-0 opacity-100'
+                    : 'pointer-events-none -translate-y-2 opacity-0'
+                  }`}
+                style={{ zIndex: MAX_Z_INDEX }}
               >
-                <li className="text-base font-medium text-gray-300">Web Solutions</li>
-                <li>
-                  <Link
-                    to="/services/web-development"
-                    onClick={handleCloseMenu}
-                    className="text-base text-gray-400 hover:text-[#00B51D] flex items-center"
-                  >
-                    <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                    Web Development
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/services/ecommerce"
-                    onClick={handleCloseMenu}
-                    className="text-base text-gray-400 hover:text-[#00B51D] flex items-center"
-                  >
-                    <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                    E-Commerce
-                  </Link>
-                </li>
-                <li className="text-base font-medium text-gray-300 mt-2">Cybersecurity</li>
-                <li>
-                  <Link
-                    to="/services/vulnerability-assessment"
-                    onClick={handleCloseMenu}
-                    className="text-base text-gray-400 hover:text-[#00B51D] flex items-center"
-                  >
-                    <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                    Vulnerability Assessment
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/services/penetration-testing"
-                    onClick={handleCloseMenu}
-                    className="text-base text-gray-400 hover:text-[#00B51D] flex items-center"
-                  >
-                    <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                    Penetration Testing
-                  </Link>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <Link
-                to="/careers"
-                onClick={handleCloseMenu}
-                className={`text-xl font-medium flex items-center ${
-                  isActiveRoute('/careers') ? 'text-[#00B51D]' : 'text-white hover:text-[#00B51D]'
-                }`}
-              >
-                <FiServer className="mr-2" /> Careers
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/chat-support"
-                onClick={handleCloseMenu}
-                className={`text-xl font-medium flex items-center ${
-                  isActiveRoute('/chat-support') ? 'text-[#00B51D]' : 'text-white hover:text-[#00B51D]'
-                }`}
-              >
-                <FiMessageSquare className="mr-2" /> Talk to Xempi
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/shop"
-                onClick={handleCloseMenu}
-                className={`text-xl font-medium flex items-center ${
-                  isActiveRoute('/shop') ? 'text-[#00B51D]' : 'text-white hover:text-[#00B51D]'
-                }`}
-              >
-                <FiShoppingCart className="mr-2" /> Shop
-              </Link>
-            </li>
-          </ul>
+                <input
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder={text.nav.searchPlaceholder}
+                  className="w-full border-b border-[#20232e]/10 bg-[#f3f7f6] px-4 py-3 text-sm text-[#20232e] outline-none placeholder:text-[#20232e]/40 dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-white/40"
+                />
+
+                <div className="p-2">
+                  {searchResults.map((service) => (
+                    <Link
+                      key={service.slug}
+                      to={`/services/${service.slug}`}
+                      onClick={closeMenus}
+                      className="block px-3 py-3 text-sm text-[#20232e]/75 transition hover:bg-[#f3f7f6] hover:text-[#0068B8] dark:text-white/75 dark:hover:bg-white/10 dark:hover:text-white"
+                    >
+                      <span className="font-semibold">{service.shortTitle}</span>
+                      <span className="block text-xs text-[#20232e]/45 dark:text-white/40">
+                        {service.category}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <Link
+              to="/contact"
+              className="hidden border-2 border-[#20232e] bg-[#20232e] px-5 py-3 text-sm font-bold uppercase text-white shadow-lg shadow-black/10 transition hover:-translate-y-0.5 hover:bg-transparent hover:text-[#20232e] dark:border-white dark:bg-white dark:text-[#20232e] dark:hover:bg-transparent dark:hover:text-white md:inline-flex"
+            >
+              {text.nav.requestAssessment}
+            </Link>
+
+            <Link
+              to="/contact"
+              className="inline-flex items-center justify-center rounded-full border border-[#0068B8]/40 bg-[#0068B8] px-4 py-2 text-xs font-black uppercase tracking-wide text-white shadow-lg shadow-[#0068B8]/20 transition active:scale-95 sm:hidden"
+            >
+              Request
+            </Link>
+
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-[#20232e]/15 bg-white text-[#20232e] shadow-lg shadow-black/10 transition active:scale-95 dark:border-white/15 dark:bg-white/10 dark:text-white lg:hidden"
+              aria-label="Open menu"
+            >
+              <FiMenu className="h-5 w-5" />
+            </button>
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+
+      <div
+        className={`fixed inset-0 bg-black/70 backdrop-blur-sm transition duration-300 lg:hidden ${isMobileMenuOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
+          }`}
+        style={{ zIndex: MAX_Z_INDEX }}
+        onClick={closeMenus}
+      />
+
+      <aside
+        className={`fixed bottom-0 right-0 top-0 flex w-full max-w-[420px] flex-col bg-[#050608] text-white shadow-2xl shadow-black/50 transition-transform duration-500 ease-out lg:hidden ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+        style={{ zIndex: MAX_Z_INDEX }}
+      >
+        <div className="flex items-center justify-between border-b border-white/10 px-5 py-5">
+          <Link to="/" onClick={closeMenus} className="flex items-center">
+            <img
+              src="/septagreen-logo.png"
+              alt="SeptaGreen"
+              className="sg-brand-logo h-auto w-36 object-contain brightness-0 invert"
+            />
+          </Link>
+
+          <button
+            type="button"
+            onClick={closeMenus}
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition active:scale-95"
+            aria-label="Close menu"
+          >
+            <FiX className="h-5 w-5" />
+          </button>
+        </div>
+
+        <div className="flex items-center gap-3 border-b border-white/10 px-5 py-4">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="flex flex-1 items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-3 text-sm font-bold"
+          >
+            {theme === 'dark' ? <FiSun /> : <FiMoon />}
+            {theme === 'dark' ? text.controls.themeLight : text.controls.themeDark}
+          </button>
+
+          <button
+            type="button"
+            onClick={toggleLanguage}
+            className="flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-3 text-sm font-bold"
+          >
+            <FiGlobe />
+            {language === 'en' ? text.controls.english : text.controls.swahili}
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-5 py-6">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.25em] text-white/35">
+              Navigation
+            </p>
+
+            <div className="mt-4 grid gap-2">
+              {[
+                ['/identity', text.nav.identity, FiInfo],
+                ['/insights', text.nav.insights, FiMessageSquare],
+                ['/developerx', text.nav.developers, FiCode],
+                ['/contact', text.nav.contact, FiShield],
+              ].map(([href, label, Icon]) => (
+                <Link
+                  key={href}
+                  to={href}
+                  onClick={closeMenus}
+                  className="group flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-4 transition hover:border-[#0068B8]/60 hover:bg-[#0068B8]/10"
+                >
+                  <span className="flex items-center gap-3 text-lg font-black">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0068B8]/15 text-[#00B51D]">
+                      <Icon className="h-5 w-5" />
+                    </span>
+                    {label}
+                  </span>
+
+                  <FiArrowRight className="h-5 w-5 text-white/45 transition group-hover:translate-x-1 group-hover:text-white" />
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-8">
+            <p className="text-xs font-black uppercase tracking-[0.25em] text-white/35">
+              More
+            </p>
+
+            <div className="mt-4 grid gap-2">
+              {resourceLinks.slice(1).map(({ href, labelKey, icon: Icon }) => (
+                <Link
+                  key={href}
+                  to={href}
+                  onClick={closeMenus}
+                  className="group flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-4 transition hover:border-[#00B51D]/50 hover:bg-[#00B51D]/10"
+                >
+                  <span className="flex items-center gap-3 text-base font-bold">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-[#00B51D]">
+                      <Icon className="h-4 w-4" />
+                    </span>
+                    {text.nav[labelKey]}
+                  </span>
+
+                  <FiArrowRight className="h-5 w-5 text-white/45 transition group-hover:translate-x-1 group-hover:text-white" />
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-8">
+            <p className="text-xs font-black uppercase tracking-[0.25em] text-white/35">
+              {text.nav.services}
+            </p>
+
+            <div className="mt-4 grid gap-3">
+              {services.slice(0, 6).map((service) => (
+                <Link
+                  key={service.slug}
+                  to={`/services/${service.slug}`}
+                  onClick={closeMenus}
+                  className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 transition hover:border-[#0068B8]/60 hover:bg-[#0068B8]/10"
+                >
+                  <span className="text-xs font-bold uppercase tracking-wide text-[#00B51D]">
+                    {service.category}
+                  </span>
+
+                  <span className="mt-1 block text-base font-black">
+                    {service.shortTitle}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-white/10 p-5">
+          <Link
+            to="/contact"
+            onClick={closeMenus}
+            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 py-4 text-sm font-black uppercase tracking-wide text-[#050608] shadow-xl shadow-black/20 transition active:scale-[0.98]"
+          >
+            {text.nav.requestAssessment}
+            <FiArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </aside>
+    </>
   );
 };
 

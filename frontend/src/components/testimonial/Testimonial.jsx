@@ -1,184 +1,115 @@
-import React, { useState, useEffect } from 'react';
-import { motion, useMotionValue, useMotionTemplate, AnimatePresence } from 'framer-motion';
-import { FiChevronLeft, FiChevronRight, FiUser } from 'react-icons/fi'; // Import avatar icon
+import { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { FiChevronLeft, FiChevronRight, FiStar, FiUser } from 'react-icons/fi';
 
 const testimonials = [
   {
     name: 'Dr. Nia Muthoni',
     role: 'CTO, KopaTech',
     content:
-      'SeptaGreen has been instrumental in fortifying our systems. Their proactive threat detection saved us from potential breaches before they escalated.',
-    image: '/assets/clients/client1.jpg', // kept for data structure consistency
+      'SeptaGreen helped us move from scattered vulnerability reports to a clear security roadmap. The executive summary was as useful as the technical detail.',
     highlight: 'Reduced fraud incidents by 78%',
   },
   {
     name: 'David Mwangi',
     role: 'Founder, eShamba',
     content:
-      'We were losing sleep over data security until we partnered with SeptaGreen. Now we focus on growth while they keep us safe.',
-    image: '/assets/clients/client2.jpg',
+      'We needed a security partner who understood growth, payments, and African operating realities. The team gave us practical fixes without slowing product delivery.',
     highlight: 'Zero data breaches in 12 months',
   },
   {
     name: 'Grace Atieno',
     role: 'CEO, TrueHealth Africa',
     content:
-      'SeptaGreen brought a rare mix of professionalism and cultural understanding. They helped us navigate complex cybersecurity challenges unique to African healthcare.',
-    image: '/assets/clients/client3.jpg',
-    highlight: 'Full compliance in under 3 months',
+      'Their application testing was precise, well documented, and easy for our engineers to act on. It improved our platform and our board reporting.',
+    highlight: 'Compliance readiness in under 3 months',
   },
 ];
 
 const TestimonialsSection = () => {
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
+  const nextTestimonial = () => setActiveIndex((prev) => (prev + 1) % testimonials.length);
+  const prevTestimonial = () => setActiveIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
 
   useEffect(() => {
-    const section = document.getElementById('testimonials-section');
-    if (!section) return;
-
-    const handleMouseMove = ({ clientX, clientY }) => {
-      const { left, top } = section.getBoundingClientRect();
-      mouseX.set(clientX - left);
-      mouseY.set(clientY - top);
-    };
-
-    section.addEventListener('mousemove', handleMouseMove);
-    return () => section.removeEventListener('mousemove', handleMouseMove);
-  }, [mouseX, mouseY]);
-
-  const background = useMotionTemplate`
-    radial-gradient(600px circle at ${mouseX}px ${mouseY}px,
-    rgba(16, 185, 129, 0.15),
-    transparent 80%)
-  `;
-
-  const nextTestimonial = () => {
-    setActiveIndex((prev) => (prev + 1) % testimonials.length);
-  };
-
-  const prevTestimonial = () => {
-    setActiveIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-  };
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      nextTestimonial();
-    }, 8000);
+    const interval = setInterval(nextTestimonial, 8000);
     return () => clearInterval(interval);
-  }, [activeIndex]);
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'ArrowRight') nextTestimonial();
-      if (e.key === 'ArrowLeft') prevTestimonial();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  const active = testimonials[activeIndex];
+
   return (
-    <section
-      id="testimonials-section"
-      className="relative py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 to-white overflow-hidden"
-    >
-      {/* Animated Gradient Background */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none"
-        style={{ background }}
-      />
-
-      {/* Subtle African Pattern */}
-      <svg
-        className="absolute inset-0 w-full h-full opacity-5"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          <pattern
-            id="african-pattern"
-            patternUnits="userSpaceOnUse"
-            width="60"
-            height="60"
-          >
-            <path d="M0 30h60M30 0v60" stroke="#10B981" strokeWidth="0.75" />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#african-pattern)" />
-      </svg>
-
-      <div className="relative max-w-5xl mx-auto text-center">
-        <motion.h2
-          className="text-4xl sm:text-5xl font-bold text-gray-900 mb-16 relative z-10"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          What Our Clients Say
-        </motion.h2>
-
-        <div className="relative">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeIndex}
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ type: 'spring', stiffness: 120, damping: 20 }}
-              className="bg-white rounded-2xl shadow-2xl p-10 relative z-10 max-w-3xl mx-auto"
-            >
-              <blockquote className="text-lg md:text-xl text-gray-600 italic mb-8 leading-relaxed">
-                "{testimonials[activeIndex].content}"
-              </blockquote>
-
-              <div className="flex flex-col items-center">
-                {/* Uniform Avatar Icon */}
-                <div className="w-20 h-20 rounded-full border-4 border-green-500 flex items-center justify-center bg-green-50 mb-4">
-                  <FiUser className="text-green-600 text-4xl" />
-                </div>
-
-                <p className="font-semibold text-gray-900 text-lg">
-                  {testimonials[activeIndex].name}
-                </p>
-                <p className="text-sm text-gray-500 mb-3">{testimonials[activeIndex].role}</p>
-                <span className="inline-block bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">
-                  {testimonials[activeIndex].highlight}
-                </span>
-              </div>
-            </motion.div>
-          </AnimatePresence>
-
-          {/* Navigation */}
-          <motion.button
-            aria-label="Previous Testimonial"
-            onClick={prevTestimonial}
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white rounded-full shadow-md p-3 hover:bg-green-100 transition-colors z-20"
-          >
-            <FiChevronLeft className="text-green-600 text-2xl" />
-          </motion.button>
-
-          <motion.button
-            aria-label="Next Testimonial"
-            onClick={nextTestimonial}
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white rounded-full shadow-md p-3 hover:bg-green-100 transition-colors z-20"
-          >
-            <FiChevronRight className="text-green-600 text-2xl" />
-          </motion.button>
+    <section className="relative overflow-hidden bg-white py-20 text-[#20232e] dark:bg-[#20232e] dark:text-white md:py-28">
+      <div className="absolute inset-0 sg-grid-pattern opacity-45" />
+      <div className="sg-shell relative z-10">
+        <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
+          <div>
+            <p className="sg-kicker font-bold text-[#0068B8]">Testimonials</p>
+            <h2 className="sg-section-title mt-4 font-black">Clear communication, technical depth, stronger defenses.</h2>
+          </div>
+          <p className="sg-body-large text-gray-600 dark:text-white/60">
+            Security buyers need proof that a partner can speak to engineers, operators, and leadership. This section now carries that proof with stronger hierarchy.
+          </p>
         </div>
 
-        {/* Pagination Dots */}
-        <div className="flex justify-center mt-8 space-x-3">
-          {testimonials.map((_, index) => (
-            <motion.button
-              key={index}
-              onClick={() => setActiveIndex(index)}
-              className={`w-3 h-3 rounded-full transition-all ${
-                index === activeIndex ? 'bg-green-500 scale-125' : 'bg-gray-300'
-              }`}
-              aria-label={`Go to testimonial ${index + 1}`}
-            />
-          ))}
+        <div className="mt-14 grid gap-8 lg:grid-cols-[1fr_0.42fr]">
+          <div className="relative overflow-hidden bg-[#20232e] p-6 text-white md:p-10">
+            <div className="flex gap-2 text-[#0068B8]">
+              {[...Array(5)].map((_, index) => (
+                <FiStar key={index} className="fill-current" />
+              ))}
+            </div>
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={active.name}
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -24 }}
+                transition={{ duration: 0.45 }}
+              >
+                <blockquote className="mt-8 text-3xl font-bold leading-tight md:text-5xl">“{active.content}”</blockquote>
+                <div className="mt-10 flex items-center gap-4">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white text-[#20232e]">
+                    <FiUser className="h-8 w-8" />
+                  </div>
+                  <div>
+                    <p className="text-xl font-bold">{active.name}</p>
+                    <p className="text-sm text-white/60">{active.role}</p>
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+
+            <div className="mt-10 flex items-center gap-3">
+              <button onClick={prevTestimonial} className="rounded-full border border-white/20 p-3 transition hover:border-[#00B51D]" aria-label="Previous testimonial">
+                <FiChevronLeft />
+              </button>
+              <button onClick={nextTestimonial} className="rounded-full border border-white/20 p-3 transition hover:border-[#00B51D]" aria-label="Next testimonial">
+                <FiChevronRight />
+              </button>
+            </div>
+          </div>
+
+          <div className="grid gap-4">
+            {testimonials.map((testimonial, index) => (
+              <button
+                key={testimonial.name}
+                type="button"
+                onClick={() => setActiveIndex(index)}
+                className={`border p-5 text-left transition ${
+              activeIndex === index
+                ? 'border-[#0068B8] bg-[#0068B8]/10 dark:bg-[#0068B8]/10'
+                : 'border-gray-200 bg-white hover:border-[#0068B8] dark:border-white/10 dark:bg-white/5'
+            }`}
+          >
+                <p className="text-sm font-bold text-[#0068B8]">0{index + 1}</p>
+                <p className="mt-3 text-xl font-bold text-[#20232e] dark:text-white">{testimonial.highlight}</p>
+                <p className="mt-2 text-sm text-gray-500 dark:text-white/50">{testimonial.name}</p>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </section>
