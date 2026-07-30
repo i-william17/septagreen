@@ -13,11 +13,8 @@ import {
   FiSend,
   FiTwitter,
 } from 'react-icons/fi';
-import { services, solutions } from '../../data/siteContent';
-import { useSitePreferences } from '../../context/SitePreferences';
 
 const Footer = () => {
-  const { text } = useSitePreferences();
   const [showScroll, setShowScroll] = useState(false);
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -37,37 +34,41 @@ const Footer = () => {
     setEmail('');
   };
 
+  const scrollToTop = () => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+  };
+
   return (
-    <footer className="relative overflow-hidden bg-[#20232e] text-white">
+    <footer className="relative overflow-hidden bg-[#151718] text-white">
       {showScroll && (
         <button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="fixed bottom-8 right-8 z-50 rounded-full bg-[#0068B8] p-3 text-white shadow-lg transition hover:-translate-y-1"
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 z-50 border border-white/15 bg-[#0068B8] p-3 text-white transition hover:-translate-y-1 hover:border-white/40"
           aria-label="Scroll to top"
         >
           <FiArrowUp />
         </button>
       )}
 
-      <div className="border-b border-white/10 bg-[#20232e] py-10">
+      <div className="border-b border-white/10 bg-[#151718] py-12">
         <div className="sg-shell flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="sg-kicker font-bold text-[#0068B8]">{text.footer.kicker}</p>
-            <h2 className="sg-heading mt-3 text-3xl md:text-5xl">{text.footer.title}</h2>
+            <h2 className="sg-heading text-4xl md:text-6xl">Start with a focused assessment.</h2>
           </div>
 
           <Link
-            to="/contact"
-            className="inline-flex w-fit items-center border-2 border-white bg-white px-6 py-4 text-sm font-bold uppercase text-[#20232e] transition hover:bg-transparent hover:text-white"
+            to="/request-assessment"
+            className="sg-button sg-button-light w-fit"
           >
-            {text.nav.requestAssessment}
+            Request assessment
             <FiArrowRight className="ml-2" />
           </Link>
         </div>
       </div>
 
-      <div className="sg-shell py-16">
-        <div className="grid gap-12 lg:grid-cols-[1.35fr_0.8fr_0.8fr_1.1fr]">
+      <div className="sg-shell py-16 md:py-20">
+        <div className="grid gap-12 border-b border-white/10 pb-14 lg:grid-cols-[1.35fr_0.8fr_0.8fr_1.1fr]">
           <div>
             <Link to="/" className="inline-flex items-center">
               <img
@@ -78,7 +79,7 @@ const Footer = () => {
             </Link>
 
             <p className="mt-5 max-w-md leading-relaxed text-white/60">
-              {text.footer.summary}
+              Secure digital platforms, offensive security assessments, cloud hardening, and managed protection for modern African businesses.
             </p>
 
             <div className="mt-7 flex gap-4 text-white/50">
@@ -101,10 +102,17 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="text-lg font-bold text-[#0068B8]">{text.footer.services}</h3>
+            <h3 className="text-base font-bold text-[#0068B8]">Services</h3>
 
             <ul className="mt-5 space-y-3">
-              {services.slice(0, 6).map((service) => (
+              {[
+                { slug: 'red-team', shortTitle: 'Red Team' },
+                { slug: 'penetration-testing', shortTitle: 'Penetration Testing' },
+                { slug: 'vulnerability-assessment', shortTitle: 'Vulnerability Assessment' },
+                { slug: 'web-development', shortTitle: 'Web Development' },
+                { slug: 'ecommerce-security', shortTitle: 'E-Commerce' },
+                { slug: 'application-security', shortTitle: 'Application Security' },
+              ].map((service) => (
                 <li key={service.slug}>
                   <Link
                     to={`/services/${service.slug}`}
@@ -118,15 +126,15 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="text-lg font-bold text-[#0068B8]">{text.footer.company}</h3>
+            <h3 className="text-base font-bold text-[#0068B8]">Company</h3>
 
             <ul className="mt-5 space-y-3">
               {[
-                ['/', text.nav.home],
-                ['/identity', text.nav.identity],
-                ['/insights', text.nav.insights],
-                ['/contact', text.nav.contact],
-                ['/careers', text.nav.careers],
+                ['/', 'Home'],
+                ['/identity', 'Identity'],
+                ['/insights', 'Insights'],
+                ['/contact', 'Contact'],
+                ['/careers', 'Careers'],
               ].map(([href, label]) => (
                 <li key={href}>
                   <Link
@@ -141,9 +149,9 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="text-lg font-bold text-[#0068B8]">{text.footer.newsletter}</h3>
+            <h3 className="text-base font-bold text-[#0068B8]">Newsletter</h3>
 
-            <p className="mt-5 text-white/60">{text.footer.newsletterBody}</p>
+            <p className="mt-5 text-white/60">Security notes, service updates, and practical guidance.</p>
 
             {isSubscribed ? (
               <motion.p
@@ -151,22 +159,22 @@ const Footer = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="mt-5 border border-[#00B51D]/40 bg-[#00B51D]/10 p-4 text-sm"
               >
-                {text.footer.subscribed}
+                Thank you for subscribing.
               </motion.p>
             ) : (
-              <form onSubmit={handleSubscribe} className="mt-5 flex border border-white/15 bg-white/5">
+              <form onSubmit={handleSubscribe} className="mt-5 flex border border-white/15 bg-white/[0.04]">
                 <input
                   type="email"
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
-                  placeholder={text.footer.emailPlaceholder}
-                  className="min-w-0 flex-1 bg-transparent px-4 py-3 text-white outline-none placeholder:text-white/40"
+                  placeholder="Email address"
+                  className="min-w-0 flex-1 bg-transparent px-4 py-3 text-white outline-none placeholder:text-white/40 focus-visible:outline-[#0068B8]"
                   required
                 />
 
                 <button
                   type="submit"
-                  className="bg-[#0068B8] px-4 text-white"
+                  className="border-l border-white/15 bg-[#0068B8] px-4 text-white transition hover:bg-transparent"
                   aria-label="Subscribe"
                 >
                   <FiSend />
@@ -193,13 +201,31 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col gap-4 border-t border-white/10 pt-6 text-sm text-white/40 md:flex-row md:items-center md:justify-between">
-          <p>
-            &copy; {new Date().getFullYear()} SeptaGreen. {text.footer.rights}
-          </p>
+        <div className="mt-6 flex flex-col gap-4 text-sm text-white/40 md:flex-row md:items-center md:justify-between">
+          <div className="space-y-1">
+            <p>
+              &copy; {new Date().getFullYear()} SeptaGreen. All rights reserved.
+            </p>
+            <p>
+              Developed by{' '}
+              <a
+                href="https://www.williamwritescode.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition hover:text-[#0068B8]"
+              >
+                William Writes Code
+              </a>
+              .
+            </p>
+          </div>
 
           <div className="flex flex-wrap gap-4">
-            {solutions.map((solution) => (
+            {[
+              { slug: 'security-awareness', title: 'Security Awareness' },
+              { slug: 'phishing-simulation', title: 'Phishing Simulation' },
+              { slug: 'ransomware-simulation', title: 'Ransomware Simulation' },
+            ].map((solution) => (
               <Link
                 key={solution.slug}
                 to={`/solutions/${solution.slug}`}

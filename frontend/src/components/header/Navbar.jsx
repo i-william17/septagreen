@@ -5,45 +5,156 @@ import {
   FiBriefcase,
   FiChevronDown,
   FiCode,
-  FiGlobe,
   FiHeadphones,
   FiInfo,
   FiMenu,
   FiMessageSquare,
   FiMoon,
   FiSearch,
-  FiShield,
   FiShoppingBag,
   FiSun,
   FiX,
 } from 'react-icons/fi';
 import TopBar from './Topbar';
-import { serviceGroups, services, solutions } from '../../data/siteContent';
 import { useSitePreferences } from '../../context/SitePreferences';
 
 const MAX_Z_INDEX = 2147483647;
 
 const navLinkClass = ({ isActive }) =>
-  `sg-link-line text-sm font-semibold transition-colors ${isActive
+  `sg-link-line text-[0.78rem] font-bold uppercase tracking-[0.1em] transition-colors ${isActive
     ? 'text-[#0068B8]'
-    : 'text-[#20232e]/80 hover:text-[#0068B8] dark:text-white/75 dark:hover:text-white'
+    : 'text-[#20232e]/[0.72] hover:text-[#0068B8] dark:text-white/[0.72] dark:hover:text-white'
   }`;
 
 const resourceLinks = [
-  { href: '/developerx', labelKey: 'developers', icon: FiCode },
-  { href: '/careers', labelKey: 'careers', icon: FiBriefcase },
-  { href: '/shop', labelKey: 'shop', icon: FiShoppingBag },
-  { href: '/chat-support', labelKey: 'support', icon: FiHeadphones },
+  { href: '/developerx', label: 'Developers', icon: FiCode },
+  { href: '/careers', label: 'Careers', icon: FiBriefcase },
+  { href: '/shop', label: 'Shop', icon: FiShoppingBag },
+  { href: '/chat-support', label: 'Xempi support', icon: FiHeadphones },
 ];
 
-const MegaMenu = ({ onNavigate, text }) => (
-  <div className="grid gap-6 lg:grid-cols-[1.1fr_1fr]">
-    <div className="grid gap-4 md:grid-cols-3">
+const serviceGroups = [
+  {
+    heading: 'Offensive Security',
+    description: 'Simulate real attackers before real attackers find the gap.',
+    links: ['red-team', 'penetration-testing', 'vulnerability-assessment'],
+  },
+  {
+    heading: 'Digital Platforms',
+    description: 'Build web products, commerce platforms, and application layers with security in the design.',
+    links: ['web-development', 'ecommerce-security', 'application-security'],
+  },
+  {
+    heading: 'Cloud and Managed Security',
+    description: 'Harden cloud estates, monitor exposure, and keep security operations moving.',
+    links: ['cloud-security', 'security-monitoring', 'ai-security'],
+  },
+];
+
+const services = [
+  {
+    slug: 'red-team',
+    title: 'Red Team Simulation',
+    shortTitle: 'Red Team',
+    category: 'Offensive Security',
+    summary:
+      'Realistic adversary simulations across digital, social, and operational entry points to test detection and response.',
+  },
+  {
+    slug: 'penetration-testing',
+    title: 'Penetration Testing',
+    shortTitle: 'Penetration Testing',
+    category: 'Offensive Security',
+    summary:
+      'Manual and automated testing for applications, infrastructure, APIs, and exposed digital assets.',
+  },
+  {
+    slug: 'vulnerability-assessment',
+    title: 'Vulnerability Assessment',
+    shortTitle: 'Vulnerability Assessment',
+    category: 'Offensive Security',
+    summary:
+      'Find, prioritize, and track vulnerabilities across critical systems before they become incidents.',
+  },
+  {
+    slug: 'web-development',
+    title: 'Secure Web Development',
+    shortTitle: 'Web Development',
+    category: 'Digital Platforms',
+    summary:
+      'Business websites, portals, dashboards, and application frontends designed for speed, usability, and security.',
+  },
+  {
+    slug: 'ecommerce-security',
+    title: 'E-Commerce Security',
+    shortTitle: 'E-Commerce',
+    category: 'Digital Platforms',
+    summary:
+      'Secure storefronts, payment flows, customer accounts, and operational dashboards for growing commerce brands.',
+  },
+  {
+    slug: 'application-security',
+    title: 'Application Security',
+    shortTitle: 'Application Security',
+    category: 'Digital Platforms',
+    summary:
+      'Security design reviews, application testing, and secure development support for teams building software.',
+  },
+  {
+    slug: 'cloud-security',
+    title: 'Cloud Security',
+    shortTitle: 'Cloud Security',
+    category: 'Cloud and Managed Security',
+    summary:
+      'Configuration reviews, identity hardening, and cloud architecture assessments for modern environments.',
+  },
+  {
+    slug: 'security-monitoring',
+    title: 'Security Monitoring',
+    shortTitle: 'Security Monitoring',
+    category: 'Cloud and Managed Security',
+    summary:
+      'Continuous visibility, alert triage, and vulnerability follow-up for teams that need security momentum.',
+  },
+  {
+    slug: 'ai-security',
+    title: 'AI and Automation Security',
+    shortTitle: 'AI Security',
+    category: 'Cloud and Managed Security',
+    summary:
+      'Security reviews for AI-enabled workflows, automation, data use, and model-adjacent application surfaces.',
+  },
+];
+
+const solutions = [
+  {
+    slug: 'security-awareness',
+    title: 'Security Awareness',
+    summary:
+      'Practical training that helps teams identify phishing, credential abuse, social engineering, and unsafe data handling.',
+  },
+  {
+    slug: 'phishing-simulation',
+    title: 'Phishing Simulation',
+    summary:
+      'Realistic campaigns that measure staff readiness and convert mistakes into targeted learning.',
+  },
+  {
+    slug: 'ransomware-simulation',
+    title: 'Ransomware Simulation',
+    summary:
+      'Scenario-based exercises that test decision-making, recovery planning, communication, and business continuity.',
+  },
+];
+
+const MegaMenu = ({ onNavigate }) => (
+  <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
+    <div className="grid gap-0 border-y border-[#20232e]/10 md:grid-cols-3 dark:border-white/10">
       {serviceGroups.map((group) => (
-        <div key={group.heading} className="border-l border-[#20232e]/15 pl-4 dark:border-white/10">
+        <div key={group.heading} className="border-b border-[#20232e]/10 p-4 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0 dark:border-white/10">
           <p className="text-sm font-bold text-[#0068B8]">{group.heading}</p>
 
-          <p className="mt-2 text-xs leading-relaxed text-[#20232e]/55 dark:text-white/50">
+          <p className="mt-2 text-xs leading-relaxed text-[#20232e]/[0.55] dark:text-white/50">
             {group.description}
           </p>
 
@@ -57,7 +168,7 @@ const MegaMenu = ({ onNavigate, text }) => (
                   key={slug}
                   to={`/services/${slug}`}
                   onClick={onNavigate}
-                  className="group flex items-center justify-between gap-3 px-3 py-2 text-sm font-semibold text-[#20232e]/75 transition hover:bg-[#f3f7f6] hover:text-[#0068B8] dark:text-white/75 dark:hover:bg-white/10 dark:hover:text-white"
+                  className="group flex items-center justify-between gap-3 border-t border-[#20232e]/10 py-2.5 text-sm font-semibold text-[#20232e]/75 transition hover:text-[#0068B8] dark:border-white/10 dark:text-white/75 dark:hover:text-white"
                 >
                   {service.shortTitle}
                   <FiArrowRight className="h-4 w-4 text-[#00B51D] transition group-hover:translate-x-1" />
@@ -69,25 +180,21 @@ const MegaMenu = ({ onNavigate, text }) => (
       ))}
     </div>
 
-    <div className="border border-[#20232e]/10 bg-[#f3f7f6] p-5 dark:border-white/10 dark:bg-white/5">
-      <p className="text-xs font-semibold uppercase text-[#20232e]/45 dark:text-white/40">
-        {text.nav.solutions}
-      </p>
-
-      <div className="mt-4 space-y-3">
+    <div className="border border-[#20232e]/10 bg-[#faf6ee] p-5 dark:border-white/10 dark:bg-white/5">
+      <div className="space-y-3">
         {solutions.map((solution) => (
           <Link
             key={solution.slug}
             to={`/solutions/${solution.slug}`}
             onClick={onNavigate}
-            className="group block border-b border-[#20232e]/10 pb-3 last:border-b-0 dark:border-white/10"
+            className="group block border-b border-[#20232e]/10 pb-4 last:border-b-0 dark:border-white/10"
           >
             <span className="flex items-center justify-between text-sm font-semibold text-[#20232e] dark:text-white">
               {solution.title}
               <FiArrowRight className="h-4 w-4 text-[#00B51D] transition group-hover:translate-x-1" />
             </span>
 
-            <span className="mt-1 block text-xs leading-relaxed text-[#20232e]/55 dark:text-white/50">
+            <span className="mt-1 block text-xs leading-relaxed text-[#20232e]/[0.55] dark:text-white/50">
               {solution.summary}
             </span>
           </Link>
@@ -98,7 +205,7 @@ const MegaMenu = ({ onNavigate, text }) => (
 );
 
 const Navbar = () => {
-  const { language, text, theme, toggleLanguage, toggleTheme } = useSitePreferences();
+  const { theme, toggleTheme } = useSitePreferences();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchActive, setIsSearchActive] = useState(false);
@@ -180,16 +287,16 @@ const Navbar = () => {
     setIsSearchActive(false);
   };
 
-  const logoClass = 'sg-brand-logo h-auto w-32 object-contain sm:w-44 lg:w-52';
+  const logoClass = 'sg-brand-logo h-auto w-32 object-contain sm:w-40 lg:w-44';
 
   const navThemeClass =
     theme === 'dark'
       ? isScrolled
-        ? 'border-b border-white/10 bg-[#050608]/95 shadow-xl shadow-black/40 backdrop-blur-xl'
+        ? 'border-b border-white/10 bg-[#050608]/95 backdrop-blur-xl'
         : 'border-b border-white/10 bg-[#050608]/95 backdrop-blur-xl'
       : isScrolled
-        ? 'border-b border-[#20232e]/10 bg-white/95 shadow-xl shadow-black/10 backdrop-blur-xl'
-        : 'border-b border-[#20232e]/10 bg-white/95 backdrop-blur-xl';
+        ? 'border-b border-[#20232e]/15 bg-[#f5efe3]/95 backdrop-blur-xl'
+        : 'border-b border-[#20232e]/10 bg-[#f5efe3]/[0.92] backdrop-blur-xl';
 
   return (
     <>
@@ -199,12 +306,12 @@ const Navbar = () => {
       >
         <TopBar />
 
-        <div className="sg-shell flex h-20 items-center justify-between gap-4 max-lg:h-16 max-lg:px-4">
-          <Link to="/" className="flex items-center" aria-label="SeptaGreen home">
+        <div className="sg-shell flex h-[72px] items-center justify-between gap-4 max-lg:h-16 max-lg:px-0">
+          <Link to="/" className="flex flex-none items-center" aria-label="SeptaGreen home">
             <img src="/septagreen-logo.png" alt="SeptaGreen" className={logoClass} />
           </Link>
 
-          <div className="hidden items-center gap-5 xl:gap-7 lg:flex">
+          <div className="hidden items-center gap-5 xl:flex xl:gap-6">
             <div
               className="relative"
               onMouseEnter={() => setMegaOpen(true)}
@@ -213,9 +320,9 @@ const Navbar = () => {
               <button
                 type="button"
                 onFocus={() => setMegaOpen(true)}
-                className="flex items-center gap-1 text-sm font-semibold text-[#20232e]/80 transition hover:text-[#0068B8] dark:text-white/80 dark:hover:text-white"
+                className="flex items-center gap-1 text-[0.78rem] font-bold uppercase tracking-[0.1em] text-[#20232e]/[0.72] transition hover:text-[#0068B8] dark:text-white/[0.72] dark:hover:text-white"
               >
-                {text.nav.services}
+                Services
                 <FiChevronDown className={`h-4 w-4 transition ${megaOpen ? 'rotate-180' : ''}`} />
               </button>
 
@@ -226,26 +333,22 @@ const Navbar = () => {
                   }`}
                 style={{ zIndex: MAX_Z_INDEX }}
               >
-                <div className="border border-[#20232e]/10 bg-white/95 p-6 shadow-2xl shadow-black/20 backdrop-blur-xl dark:border-white/10 dark:bg-[#20232e]/95">
-                  <MegaMenu onNavigate={closeMenus} text={text} />
+                <div className="border border-[#20232e]/[0.12] bg-[#fffdf8]/[0.98] p-5 backdrop-blur-xl dark:border-white/10 dark:bg-[#151718]/[0.98]">
+                  <MegaMenu onNavigate={closeMenus} />
                 </div>
               </div>
             </div>
 
             <NavLink to="/identity" className={navLinkClass}>
-              {text.nav.identity}
+              Identity
             </NavLink>
 
             <NavLink to="/insights" className={navLinkClass}>
-              {text.nav.insights}
+              Insights
             </NavLink>
 
             <NavLink to="/developerx" className={navLinkClass}>
-              {text.nav.developers}
-            </NavLink>
-
-            <NavLink to="/contact" className={navLinkClass}>
-              {text.nav.contact}
+              Developers
             </NavLink>
 
             <div
@@ -256,9 +359,9 @@ const Navbar = () => {
               <button
                 type="button"
                 onFocus={() => setResourcesOpen(true)}
-                className="flex items-center gap-1 text-sm font-semibold text-[#20232e]/80 transition hover:text-[#0068B8] dark:text-white/75 dark:hover:text-white"
+                className="flex items-center gap-1 text-[0.78rem] font-bold uppercase tracking-[0.1em] text-[#20232e]/[0.72] transition hover:text-[#0068B8] dark:text-white/[0.72] dark:hover:text-white"
               >
-                {text.nav.more}
+                More
                 <FiChevronDown className={`h-4 w-4 transition ${resourcesOpen ? 'rotate-180' : ''}`} />
               </button>
 
@@ -269,16 +372,16 @@ const Navbar = () => {
                   }`}
                 style={{ zIndex: MAX_Z_INDEX }}
               >
-                <div className="border border-[#20232e]/10 bg-white/95 p-2 shadow-2xl shadow-black/20 backdrop-blur-xl dark:border-white/10 dark:bg-[#20232e]/95">
-                  {resourceLinks.slice(1).map(({ href, labelKey, icon: Icon }) => (
+                <div className="border border-[#20232e]/[0.12] bg-[#fffdf8]/[0.98] p-2 backdrop-blur-xl dark:border-white/10 dark:bg-[#151718]/[0.98]">
+                  {resourceLinks.slice(1).map(({ href, label, icon: Icon }) => (
                     <Link
                       key={href}
                       to={href}
                       onClick={closeMenus}
-                      className="flex items-center gap-3 px-3 py-3 text-sm font-semibold text-[#20232e]/75 transition hover:bg-[#f3f7f6] hover:text-[#0068B8] dark:text-white/75 dark:hover:bg-white/10 dark:hover:text-white"
+                      className="flex items-center gap-3 border-b border-[#20232e]/10 px-3 py-3 text-sm font-semibold text-[#20232e]/75 transition last:border-b-0 hover:text-[#0068B8] dark:border-white/10 dark:text-white/75 dark:hover:text-white"
                     >
                       <Icon className="h-4 w-4 text-[#0068B8]" />
-                      {text.nav[labelKey]}
+                      {label}
                     </Link>
                   ))}
                 </div>
@@ -290,36 +393,25 @@ const Navbar = () => {
             <button
               type="button"
               onClick={toggleTheme}
-              className="hidden h-10 w-10 items-center justify-center border border-[#20232e]/15 text-[#20232e] transition hover:border-[#0068B8] hover:text-[#0068B8] dark:border-white/15 dark:text-white sm:flex"
-              aria-label={theme === 'dark' ? text.controls.themeLight : text.controls.themeDark}
-              title={theme === 'dark' ? text.controls.themeLight : text.controls.themeDark}
+              className="sg-icon-button hidden text-[#20232e] dark:border-white/15 dark:text-white sm:flex"
+              aria-label={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+              title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
             >
               {theme === 'dark' ? <FiSun /> : <FiMoon />}
-            </button>
-
-            <button
-              type="button"
-              onClick={toggleLanguage}
-              className="hidden h-10 items-center gap-2 border border-[#20232e]/15 px-3 text-xs font-bold text-[#20232e] transition hover:border-[#0068B8] hover:text-[#0068B8] dark:border-white/15 dark:text-white sm:flex"
-              aria-label={text.controls.language}
-              title={text.controls.language}
-            >
-              <FiGlobe className="h-4 w-4" />
-              {language === 'en' ? text.controls.english : text.controls.swahili}
             </button>
 
             <div ref={searchRef} className="relative hidden sm:block">
               <button
                 type="button"
                 onClick={() => setIsSearchActive((value) => !value)}
-                className="flex h-10 w-10 items-center justify-center border border-[#20232e]/15 text-[#20232e] transition hover:border-[#0068B8] hover:text-[#0068B8] dark:border-white/15 dark:text-white"
-                aria-label={text.nav.searchServices}
+                className="sg-icon-button text-[#20232e] dark:border-white/15 dark:text-white"
+                aria-label="Search services"
               >
                 {isSearchActive ? <FiX /> : <FiSearch />}
               </button>
 
               <div
-                className={`absolute right-0 top-12 w-80 overflow-hidden border border-[#20232e]/10 bg-white shadow-2xl transition dark:border-white/10 dark:bg-[#20232e] ${isSearchActive
+                className={`absolute right-0 top-12 w-80 overflow-hidden border border-[#20232e]/[0.12] bg-[#fffdf8] transition dark:border-white/10 dark:bg-[#151718] ${isSearchActive
                     ? 'pointer-events-auto translate-y-0 opacity-100'
                     : 'pointer-events-none -translate-y-2 opacity-0'
                   }`}
@@ -328,8 +420,8 @@ const Navbar = () => {
                 <input
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
-                  placeholder={text.nav.searchPlaceholder}
-                  className="w-full border-b border-[#20232e]/10 bg-[#f3f7f6] px-4 py-3 text-sm text-[#20232e] outline-none placeholder:text-[#20232e]/40 dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-white/40"
+                  placeholder="Search security services"
+                  className="w-full border-b border-[#20232e]/10 bg-[#faf6ee] px-4 py-3 text-sm text-[#20232e] outline-none placeholder:text-[#20232e]/40 focus:border-[#0068B8] dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-white/40"
                 />
 
                 <div className="p-2">
@@ -338,12 +430,9 @@ const Navbar = () => {
                       key={service.slug}
                       to={`/services/${service.slug}`}
                       onClick={closeMenus}
-                      className="block px-3 py-3 text-sm text-[#20232e]/75 transition hover:bg-[#f3f7f6] hover:text-[#0068B8] dark:text-white/75 dark:hover:bg-white/10 dark:hover:text-white"
+                      className="block border-b border-[#20232e]/10 px-3 py-3 text-sm text-[#20232e]/75 transition last:border-b-0 hover:text-[#0068B8] dark:border-white/10 dark:text-white/75 dark:hover:text-white"
                     >
                       <span className="font-semibold">{service.shortTitle}</span>
-                      <span className="block text-xs text-[#20232e]/45 dark:text-white/40">
-                        {service.category}
-                      </span>
                     </Link>
                   ))}
                 </div>
@@ -351,15 +440,22 @@ const Navbar = () => {
             </div>
 
             <Link
-              to="/contact"
-              className="hidden border-2 border-[#20232e] bg-[#20232e] px-5 py-3 text-sm font-bold uppercase text-white shadow-lg shadow-black/10 transition hover:-translate-y-0.5 hover:bg-transparent hover:text-[#20232e] dark:border-white dark:bg-white dark:text-[#20232e] dark:hover:bg-transparent dark:hover:text-white md:inline-flex"
+              to="/request-assessment"
+              className="sg-button sg-button-primary hidden md:inline-flex dark:border-white dark:bg-white dark:text-[#20232e] dark:hover:bg-transparent dark:hover:text-white"
             >
-              {text.nav.requestAssessment}
+              Request assessment
             </Link>
 
             <Link
               to="/contact"
-              className="inline-flex items-center justify-center rounded-full border border-[#0068B8]/40 bg-[#0068B8] px-4 py-2 text-xs font-black uppercase tracking-wide text-white shadow-lg shadow-[#0068B8]/20 transition active:scale-95 sm:hidden"
+              className="sg-button sg-button-brand hidden md:inline-flex"
+            >
+              Contact
+            </Link>
+
+            <Link
+              to="/request-assessment"
+              className="inline-flex min-h-11 items-center justify-center border border-[#0068B8] bg-[#0068B8] px-4 py-2 text-xs font-black uppercase tracking-wide text-white transition active:scale-95 sm:hidden"
             >
               Request
             </Link>
@@ -367,7 +463,7 @@ const Navbar = () => {
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(true)}
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-[#20232e]/15 bg-white text-[#20232e] shadow-lg shadow-black/10 transition active:scale-95 dark:border-white/15 dark:bg-white/10 dark:text-white lg:hidden"
+              className="flex h-11 w-11 items-center justify-center border border-[#20232e]/15 bg-[#fffdf8] text-[#20232e] transition active:scale-95 dark:border-white/15 dark:bg-white/10 dark:text-white xl:hidden"
               aria-label="Open menu"
             >
               <FiMenu className="h-5 w-5" />
@@ -377,14 +473,14 @@ const Navbar = () => {
       </nav>
 
       <div
-        className={`fixed inset-0 bg-black/70 backdrop-blur-sm transition duration-300 lg:hidden ${isMobileMenuOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
+        className={`fixed inset-0 bg-black/70 backdrop-blur-sm transition duration-300 xl:hidden ${isMobileMenuOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
           }`}
         style={{ zIndex: MAX_Z_INDEX }}
         onClick={closeMenus}
       />
 
       <aside
-        className={`fixed bottom-0 right-0 top-0 flex w-full max-w-[420px] flex-col bg-[#050608] text-white shadow-2xl shadow-black/50 transition-transform duration-500 ease-out lg:hidden ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        className={`fixed bottom-0 right-0 top-0 flex w-full max-w-[420px] flex-col border-l border-white/10 bg-[#050608] text-white transition-transform duration-500 ease-out xl:hidden ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         style={{ zIndex: MAX_Z_INDEX }}
       >
@@ -400,7 +496,7 @@ const Navbar = () => {
           <button
             type="button"
             onClick={closeMenus}
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition active:scale-95"
+            className="flex h-11 w-11 items-center justify-center border border-white/15 bg-white/10 text-white transition active:scale-95"
             aria-label="Close menu"
           >
             <FiX className="h-5 w-5" />
@@ -411,98 +507,72 @@ const Navbar = () => {
           <button
             type="button"
             onClick={toggleTheme}
-            className="flex flex-1 items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-3 text-sm font-bold"
+            className="flex w-full items-center justify-center gap-2 border border-white/15 bg-white/5 px-4 py-3 text-sm font-bold"
           >
             {theme === 'dark' ? <FiSun /> : <FiMoon />}
-            {theme === 'dark' ? text.controls.themeLight : text.controls.themeDark}
-          </button>
-
-          <button
-            type="button"
-            onClick={toggleLanguage}
-            className="flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-3 text-sm font-bold"
-          >
-            <FiGlobe />
-            {language === 'en' ? text.controls.english : text.controls.swahili}
+            {theme === 'dark' ? 'Light mode' : 'Dark mode'}
           </button>
         </div>
 
         <div className="flex-1 overflow-y-auto px-5 py-6">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.25em] text-white/35">
-              Navigation
-            </p>
-
-            <div className="mt-4 grid gap-2">
+            <div className="grid gap-2">
               {[
-                ['/identity', text.nav.identity, FiInfo],
-                ['/insights', text.nav.insights, FiMessageSquare],
-                ['/developerx', text.nav.developers, FiCode],
-                ['/contact', text.nav.contact, FiShield],
+                ['/identity', 'Identity', FiInfo],
+                ['/insights', 'Insights', FiMessageSquare],
+                ['/developerx', 'Developers', FiCode],
               ].map(([href, label, Icon]) => (
                 <Link
                   key={href}
                   to={href}
                   onClick={closeMenus}
-                  className="group flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-4 transition hover:border-[#0068B8]/60 hover:bg-[#0068B8]/10"
+                  className="group flex items-center justify-between border border-white/10 bg-white/[0.04] px-4 py-4 transition hover:border-[#0068B8]/60 hover:bg-[#0068B8]/10"
                 >
                   <span className="flex items-center gap-3 text-lg font-black">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0068B8]/15 text-[#00B51D]">
+                    <span className="flex h-10 w-10 items-center justify-center border border-white/10 bg-[#0068B8]/15 text-[#00B51D]">
                       <Icon className="h-5 w-5" />
                     </span>
                     {label}
                   </span>
 
-                  <FiArrowRight className="h-5 w-5 text-white/45 transition group-hover:translate-x-1 group-hover:text-white" />
+                  <FiArrowRight className="h-5 w-5 text-white/[0.45] transition group-hover:translate-x-1 group-hover:text-white" />
                 </Link>
               ))}
             </div>
           </div>
 
           <div className="mt-8">
-            <p className="text-xs font-black uppercase tracking-[0.25em] text-white/35">
-              More
-            </p>
-
-            <div className="mt-4 grid gap-2">
-              {resourceLinks.slice(1).map(({ href, labelKey, icon: Icon }) => (
+            <div className="grid gap-2">
+              {resourceLinks.slice(1).map(({ href, label, icon: Icon }) => (
                 <Link
                   key={href}
                   to={href}
                   onClick={closeMenus}
-                  className="group flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-4 transition hover:border-[#00B51D]/50 hover:bg-[#00B51D]/10"
+                  className="group flex items-center justify-between border border-white/10 bg-white/[0.04] px-4 py-4 transition hover:border-[#00B51D]/50 hover:bg-[#00B51D]/10"
                 >
                   <span className="flex items-center gap-3 text-base font-bold">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-[#00B51D]">
+                    <span className="flex h-9 w-9 items-center justify-center border border-white/10 bg-white/10 text-[#00B51D]">
                       <Icon className="h-4 w-4" />
                     </span>
-                    {text.nav[labelKey]}
+                    {label}
                   </span>
 
-                  <FiArrowRight className="h-5 w-5 text-white/45 transition group-hover:translate-x-1 group-hover:text-white" />
+                  <FiArrowRight className="h-5 w-5 text-white/[0.45] transition group-hover:translate-x-1 group-hover:text-white" />
                 </Link>
               ))}
             </div>
           </div>
 
           <div className="mt-8">
-            <p className="text-xs font-black uppercase tracking-[0.25em] text-white/35">
-              {text.nav.services}
-            </p>
-
-            <div className="mt-4 grid gap-3">
+            <div className="grid gap-3">
               {services.slice(0, 6).map((service) => (
                 <Link
                   key={service.slug}
                   to={`/services/${service.slug}`}
                   onClick={closeMenus}
-                  className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 transition hover:border-[#0068B8]/60 hover:bg-[#0068B8]/10"
+                  className="border border-white/10 bg-white/[0.04] p-4 transition hover:border-[#0068B8]/60 hover:bg-[#0068B8]/10"
                 >
-                  <span className="text-xs font-bold uppercase tracking-wide text-[#00B51D]">
-                    {service.category}
-                  </span>
-
-                  <span className="mt-1 block text-base font-black">
+                  <span className="block text-base font-black">
                     {service.shortTitle}
                   </span>
                 </Link>
@@ -511,13 +581,21 @@ const Navbar = () => {
           </div>
         </div>
 
-        <div className="border-t border-white/10 p-5">
+        <div className="grid grid-cols-2 gap-3 border-t border-white/10 p-5">
+          <Link
+            to="/request-assessment"
+            onClick={closeMenus}
+            className="flex w-full items-center justify-center gap-2 bg-white px-3 py-4 text-xs font-black uppercase tracking-wide text-[#050608] transition active:scale-[0.98] sm:text-sm"
+          >
+            Assessment
+            <FiArrowRight className="h-4 w-4" />
+          </Link>
           <Link
             to="/contact"
             onClick={closeMenus}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 py-4 text-sm font-black uppercase tracking-wide text-[#050608] shadow-xl shadow-black/20 transition active:scale-[0.98]"
+            className="flex w-full items-center justify-center gap-2 border border-white/20 bg-[#0068B8] px-3 py-4 text-xs font-black uppercase tracking-wide text-white transition active:scale-[0.98] sm:text-sm"
           >
-            {text.nav.requestAssessment}
+            Contact
             <FiArrowRight className="h-4 w-4" />
           </Link>
         </div>

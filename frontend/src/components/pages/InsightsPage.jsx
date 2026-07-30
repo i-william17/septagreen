@@ -6,7 +6,7 @@ export default function InsightsPage() {
   return (
     <>
       <Header />
-      <main className="bg-white pt-24 dark:bg-[#20232e]">
+      <main className="bg-[#f5efe3] pt-24 dark:bg-[#20232e]">
         <BlogSection compact />
       </main>
       <Footer />

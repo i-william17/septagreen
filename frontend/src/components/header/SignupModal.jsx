@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FiX, FiAlertCircle, FiCheck } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 
-const SignupModal = ({ onClose, onSwitchToLogin, onSubmit, isSubmitting, submitSuccess, text }) => {
+const SignupModal = ({ onClose, onSwitchToLogin, onSubmit, isSubmitting, submitSuccess }) => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -83,19 +83,19 @@ const SignupModal = ({ onClose, onSwitchToLogin, onSubmit, isSubmitting, submitS
                     onClose();
                 }
             }}
-            className="fixed inset-0 z-[100] flex min-h-dvh items-center justify-center overflow-y-auto bg-[#20232e]/70 p-4 py-8 backdrop-blur-md"
+            className="fixed inset-0 z-[100] flex min-h-dvh items-center justify-center overflow-y-auto bg-[#151718]/[0.76] p-4 py-8 backdrop-blur-md"
         >
             <motion.div 
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -20, opacity: 0 }}
-                className="max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-2xl shadow-black/30 dark:border-white/10 dark:bg-[#111827]"
+                className="max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto border border-[#20232e]/15 bg-[#fffdf8] dark:border-white/10 dark:bg-[#111418]"
             >
-                <div className="flex justify-between items-center bg-[#20232e] p-4">
-                    <h3 className="text-lg font-semibold text-white">{text.signupTitle}</h3>
+                <div className="flex justify-between items-center border-b border-white/10 bg-[#151718] p-4">
+                    <h3 className="text-lg font-semibold text-white">Create a SeptaGreen account</h3>
                     <button
                         onClick={onClose}
-                        className="text-white hover:text-[#00B51D] transition-colors"
+                        className="border border-white/15 p-1 text-white transition-colors hover:text-[#00B51D]"
                         disabled={isSubmitting}
                     >
                         <FiX size={20} />
@@ -104,13 +104,13 @@ const SignupModal = ({ onClose, onSwitchToLogin, onSubmit, isSubmitting, submitS
 
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
                     <div className="space-y-1">
-                        <label className="block text-sm font-medium text-gray-700 dark:text-white/75">{text.fullName}</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-white/75">Full name</label>
                         <input
                             type="text"
                             name="name"
                             value={formData.name}
                             onChange={handleInputChange}
-                            className={`w-full px-4 py-2 text-sm border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#00B51D] focus:border-transparent dark:border-white/10 dark:bg-[#102418] dark:text-white`}
+                            className={`w-full border ${errors.name ? 'border-red-500' : 'border-[#20232e]/15'} bg-white px-4 py-2 text-sm text-gray-900 focus:border-[#0068B8] focus:outline-none focus:ring-2 focus:ring-[#0068B8]/10 dark:border-white/10 dark:bg-[#111418] dark:text-white`}
                             disabled={isSubmitting}
                         />
                         {errors.name && (
@@ -121,13 +121,13 @@ const SignupModal = ({ onClose, onSwitchToLogin, onSubmit, isSubmitting, submitS
                     </div>
 
                     <div className="space-y-1">
-                        <label className="block text-sm font-medium text-gray-700 dark:text-white/75">{text.email}</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-white/75">Email address</label>
                         <input
                             type="email"
                             name="email"
                             value={formData.email}
                             onChange={handleInputChange}
-                            className={`w-full px-4 py-2 text-sm border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#00B51D] focus:border-transparent dark:border-white/10 dark:bg-[#102418] dark:text-white`}
+                            className={`w-full border ${errors.email ? 'border-red-500' : 'border-[#20232e]/15'} bg-white px-4 py-2 text-sm text-gray-900 focus:border-[#0068B8] focus:outline-none focus:ring-2 focus:ring-[#0068B8]/10 dark:border-white/10 dark:bg-[#111418] dark:text-white`}
                             disabled={isSubmitting}
                         />
                         {errors.email && (
@@ -138,13 +138,13 @@ const SignupModal = ({ onClose, onSwitchToLogin, onSubmit, isSubmitting, submitS
                     </div>
 
                     <div className="space-y-1">
-                        <label className="block text-sm font-medium text-gray-700 dark:text-white/75">{text.password}</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-white/75">Password</label>
                         <input
                             type="password"
                             name="password"
                             value={formData.password}
                             onChange={handleInputChange}
-                            className={`w-full px-4 py-2 text-sm border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#00B51D] focus:border-transparent dark:border-white/10 dark:bg-[#102418] dark:text-white`}
+                            className={`w-full border ${errors.password ? 'border-red-500' : 'border-[#20232e]/15'} bg-white px-4 py-2 text-sm text-gray-900 focus:border-[#0068B8] focus:outline-none focus:ring-2 focus:ring-[#0068B8]/10 dark:border-white/10 dark:bg-[#111418] dark:text-white`}
                             disabled={isSubmitting}
                         />
                         {errors.password && (
@@ -155,22 +155,22 @@ const SignupModal = ({ onClose, onSwitchToLogin, onSubmit, isSubmitting, submitS
                         
                         {formData.password && (
                             <div className="mt-2 space-y-1">
-                                <p className="text-xs text-gray-600 dark:text-white/60">{text.passwordRules}</p>
+                                <p className="text-xs text-gray-600 dark:text-white/60">Password must contain:</p>
                                 <ul className="text-xs space-y-1">
                                     <li className={`flex items-center ${passwordStrength.length ? 'text-green-600' : 'text-gray-400'}`}>
-                                        <FiCheck className="mr-1" size={12} /> {text.ruleLength}
+                                        <FiCheck className="mr-1" size={12} /> At least 8 characters
                                     </li>
                                     <li className={`flex items-center ${passwordStrength.uppercase ? 'text-green-600' : 'text-gray-400'}`}>
-                                        <FiCheck className="mr-1" size={12} /> {text.ruleUppercase}
+                                        <FiCheck className="mr-1" size={12} /> One uppercase letter
                                     </li>
                                     <li className={`flex items-center ${passwordStrength.lowercase ? 'text-green-600' : 'text-gray-400'}`}>
-                                        <FiCheck className="mr-1" size={12} /> {text.ruleLowercase}
+                                        <FiCheck className="mr-1" size={12} /> One lowercase letter
                                     </li>
                                     <li className={`flex items-center ${passwordStrength.number ? 'text-green-600' : 'text-gray-400'}`}>
-                                        <FiCheck className="mr-1" size={12} /> {text.ruleNumber}
+                                        <FiCheck className="mr-1" size={12} /> One number
                                     </li>
                                     <li className={`flex items-center ${passwordStrength.specialChar ? 'text-green-600' : 'text-gray-400'}`}>
-                                        <FiCheck className="mr-1" size={12} /> {text.ruleSpecial}
+                                        <FiCheck className="mr-1" size={12} /> One special character
                                     </li>
                                 </ul>
                             </div>
@@ -178,13 +178,13 @@ const SignupModal = ({ onClose, onSwitchToLogin, onSubmit, isSubmitting, submitS
                     </div>
 
                     <div className="space-y-1">
-                        <label className="block text-sm font-medium text-gray-700 dark:text-white/75">{text.confirmPassword}</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-white/75">Confirm password</label>
                         <input
                             type="password"
                             name="confirmPassword"
                             value={formData.confirmPassword}
                             onChange={handleInputChange}
-                            className={`w-full px-4 py-2 text-sm border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'} rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#00B51D] focus:border-transparent dark:border-white/10 dark:bg-[#102418] dark:text-white`}
+                            className={`w-full border ${errors.confirmPassword ? 'border-red-500' : 'border-[#20232e]/15'} bg-white px-4 py-2 text-sm text-gray-900 focus:border-[#0068B8] focus:outline-none focus:ring-2 focus:ring-[#0068B8]/10 dark:border-white/10 dark:bg-[#111418] dark:text-white`}
                             disabled={isSubmitting}
                         />
                         {errors.confirmPassword && (
@@ -198,17 +198,17 @@ const SignupModal = ({ onClose, onSwitchToLogin, onSubmit, isSubmitting, submitS
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
+                            className="relative border border-green-400 bg-green-100 px-4 py-3 text-green-700"
                         >
                             <div className="flex items-center">
                                 <FiCheck className="mr-2" />
-                                {text.signupSuccess}
+                                Account created successfully.
                             </div>
                         </motion.div>
                     ) : (
                         <motion.button
                             type="submit"
-                            className={`w-full ${isSubmitting ? 'bg-[#20232e]/80' : 'bg-[#20232e]'} text-white py-2.5 px-4 rounded-lg hover:bg-[#20232e] transition-colors font-medium mt-2 flex items-center justify-center`}
+                            className={`sg-button mt-2 flex w-full items-center justify-center px-4 py-2.5 font-medium text-white transition-colors hover:bg-[#20232e] ${isSubmitting ? 'bg-[#20232e]/80' : 'bg-[#20232e]'}`}
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? (
@@ -217,10 +217,10 @@ const SignupModal = ({ onClose, onSwitchToLogin, onSubmit, isSubmitting, submitS
                                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                     </svg>
-                                    {text.processing}
+                                    Processing...
                                 </>
                             ) : (
-                                text.signUp
+                                'Sign up'
                             )}
                         </motion.button>
                     )}
@@ -232,7 +232,7 @@ const SignupModal = ({ onClose, onSwitchToLogin, onSubmit, isSubmitting, submitS
                             className="text-sm text-[#00B51D] hover:underline font-medium"
                             disabled={isSubmitting}
                         >
-                            {text.hasAccount}
+                            Already have an account? Login
                         </button>
                     </div>
                 </form>

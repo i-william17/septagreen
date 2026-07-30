@@ -22,7 +22,7 @@ const Loader = ({ isLoading }) => {
   return (
     <div className={`
       fixed inset-0 z-50 flex items-center justify-center 
-      bg-white bg-opacity-90 backdrop-blur-sm
+      bg-[#f5efe3] bg-opacity-95 backdrop-blur-sm
       transition-all duration-500 ease-in-out
       ${isLoading ? 'opacity-100' : 'opacity-0'}
     `}>
@@ -37,16 +37,6 @@ const Loader = ({ isLoading }) => {
           }}
           className={`transition-transform duration-300 ${animationComplete ? 'scale-105' : 'scale-100'}`}
         />        
-        {/* Loading progress indicator */}
-        {/* <div className="w-full bg-gray-200 rounded-full h-1.5 mt-6 max-w-xs">
-          <div 
-            className="bg-gradient-to-r from-[#00B51D] to-[#0068B8] h-1.5 rounded-full" 
-            style={{
-              width: `${animationComplete ? '100%' : '60%'}`,
-              transition: 'width 1s ease-in-out'
-            }}
-          />
-        </div> */}
       </div>
     </div>
   );

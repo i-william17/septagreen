@@ -4,10 +4,8 @@ import { FiClock, FiLock, FiMail, FiPhone, FiUser } from 'react-icons/fi';
 import { FaFacebook, FaInstagram, FaLinkedin, FaTiktok, FaTwitter } from 'react-icons/fa';
 import LoginModal from './LoginModal';
 import SignupModal from './SignupModal';
-import { useSitePreferences } from '../../context/SitePreferences';
 
 const TopBar = () => {
-  const { text } = useSitePreferences();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignupModal, setShowSignupModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,11 +36,11 @@ const TopBar = () => {
 
   return (
     <>
-      <div className="hidden border-b border-white/10 bg-[#20232e] text-xs text-white/70 md:block">
-        <div className="sg-shell flex items-center justify-between py-2">
+      <div className="hidden border-b border-white/10 bg-[#151718] text-xs text-white/[0.68] md:block">
+        <div className="sg-shell flex min-h-10 items-center justify-between">
           <div className="flex items-center gap-5">
             <span className="flex items-center gap-2">
-              <FiClock className="text-[#00B51D]" /> {text.topbar.hours}
+              <FiClock className="text-[#00B51D]" /> Mon-Fri: 9AM-5PM
             </span>
             <a href="tel:+254711160437" className="flex items-center gap-2 transition hover:text-white">
               <FiPhone className="text-[#00B51D]" /> (+254) 711-160437
@@ -54,10 +52,10 @@ const TopBar = () => {
 
           <div className="flex items-center gap-4">
             <button type="button" onClick={() => setShowLoginModal(true)} className="flex items-center gap-1 transition hover:text-white">
-              <FiUser /> {text.topbar.login}
+              <FiUser /> Login
             </button>
             <button type="button" onClick={() => setShowSignupModal(true)} className="flex items-center gap-1 transition hover:text-white">
-              <FiLock /> {text.topbar.signup}
+              <FiLock /> Sign Up
             </button>
             <div className="flex items-center gap-2 text-white/60">
               {[
@@ -87,7 +85,6 @@ const TopBar = () => {
             onSubmit={handleAuthSubmit}
             isSubmitting={isSubmitting}
             submitSuccess={submitSuccess}
-            text={text.auth}
           />
         )}
       </AnimatePresence>
@@ -103,7 +100,6 @@ const TopBar = () => {
             onSubmit={handleAuthSubmit}
             isSubmitting={isSubmitting}
             submitSuccess={submitSuccess}
-            text={text.auth}
           />
         )}
       </AnimatePresence>
